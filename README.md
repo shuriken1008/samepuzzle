@@ -9,5 +9,5 @@
 - 目標点数に先に届いた方が勝者
 
 元ネタ：
-(https://dixq.net/sm/img/d9/1.jpg)
+![画像](https://dixq.net/sm/img/d9/1.jpg)
  
