@@ -118,10 +118,10 @@ public class Stage {
         int diff = startX - endX;
         System.out.println(startX);
 
-        for(int x=0 ; x<plot.length; x++){
+        for(int x=startX ; x<endX; x++){
             temp[x] = plot[x][y];
         }
-        for(int x=0; x<plot.length-startX; x++){
+        for(int x=0; x+startX<plot.length; x++){
             plot[x+startX][y] = temp[x];
         }
         
@@ -139,15 +139,13 @@ public class Stage {
                         startX = x;
                     }
                 }
-
-
             }
-            if(endX<0 || startX <=0){
+            if(endX<0 || startX <0){
                 continue;
             }
             System.out.print(startX + ",");
             System.out.println(endX);
-            if(startX > endX){
+            if(startX < endX){
                 continue;
             }
             fallSort(y, startX, endX);
