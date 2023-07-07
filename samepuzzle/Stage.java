@@ -37,15 +37,16 @@ public class Stage {
             blockId = plot[x][y];
 
             totalBlocks = 1;
+            plot[x][y] = 0;
             totalBlocks += breakBlock(x+1, y, x, y, blockId);
             totalBlocks += breakBlock(x-1, y, x, y, blockId);
             totalBlocks += breakBlock(x, y+1, x, y, blockId);
             totalBlocks += breakBlock(x, y-1, x, y, blockId);
-            plot[x][y] = 0;
+            
 
 
         }
-
+        updatePlot();
         return totalBlocks;
     }
     private int breakBlock(int x, int y, int beforeX, int beforeY, int blockId){
@@ -60,6 +61,7 @@ public class Stage {
         
 
             totalBlocks = 1;
+            plot[x][y] = 0;
             if(x+1 != beforeX){
                 totalBlocks += breakBlock(x+1, y, x, y, blockId);
             }
@@ -72,7 +74,7 @@ public class Stage {
             if(y-1 != beforeY){
                 totalBlocks += breakBlock(x, y-1, x, y, blockId);
             }
-            plot[x][y] = 0;
+            
         }
         return totalBlocks;
     }
@@ -113,42 +115,47 @@ public class Stage {
         return false;
     }
 
-    public void fallSort(int y, int startX, int endX){
-        int[] temp = new int[plot.length];
-        int diff = startX - endX;
-        System.out.println(startX);
-
-        for(int x=startX ; x<endX; x++){
-            temp[x] = plot[x][y];
-        }
-        for(int x=0; x+startX<plot.length; x++){
-            plot[x+startX][y] = temp[x];
+public static int[] moveZerosToStart(int[] array) {
+        int[] result = new int[array.length];
+        int index = result.length - 1;
+        
+        // 0以外の要素を新しい配列の末尾から詰めていく
+        for (int i = array.length - 1; i >= 0; i--) {
+            if (array[i] != 0) {
+                result[index] = array[i];
+                index--;
+            }
         }
         
+        // 残りの要素に0を詰める
+        while (index >= 0) {
+            result[index] = 0;
+            index--;
+        }
+        
+        return result;
     }
 
     public void updatePlot(){
         for(int y=0; y<plot.length; y++){
-            int startX = -1;
-            int endX= -1;
-            for(int x=0; x<plot.length-1; x++){
-                if(plot[x][y] == 0){
-                    endX = x;
-                }else{
-                    if(startX > x){
-                        startX = x;
-                    }
+            int[] result = new int[plot.length];
+            int index = result.length - 1;
+            // 0以外の要素を新しい配列の末尾から詰めていく
+            for (int x = plot.length - 1; x >= 0; x--) {
+                if (plot[x][y] != 0) {
+                    result[index] = plot[x][y];
+                    index--;
                 }
             }
-            if(endX<0 || startX <0){
-                continue;
+            // 残りの要素に0を詰める
+            while (index >= 0) {
+                result[index] = 0;
+                index--;
             }
-            System.out.print(startX + ",");
-            System.out.println(endX);
-            if(startX < endX){
-                continue;
+
+            for(int x =0;x<plot.length; x++){
+                plot[x][y] = result[x];
             }
-            fallSort(y, startX, endX);
         }
     }
 
@@ -219,8 +226,6 @@ public class Stage {
             s.breakBlock(x,y);
             s.showStdOut();
             System.out.println();
-            s.updatePlot();
-            s.showStdOut();
             
         }
     }

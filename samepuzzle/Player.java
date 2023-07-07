@@ -4,13 +4,18 @@ import java.util.UUID;
 
 public class Player {
     private String name;
-    private String id;
+    private String uuid;
     private int rank;
     private int score = 0;
+    private Stage mystage;
 
 
     public Player(String name){
         this.name = name;
-        id = UUID.randomUUID().toString();
+        uuid = UUID.randomUUID().toString();
+    }
+
+    public String getUUID(){   
+        return uuid;
     }
 }
