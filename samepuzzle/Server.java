@@ -38,10 +38,10 @@ class Server
 	    // 接続待機。接続完了後、次行命令に移る。
 	    Socket socket = srvSock.accept();
 	    //接続先アドレスを表示
-      System.out.println("Address:" + socket.getInetAddress());
+      	System.out.println("Address:" + socket.getInetAddress());
 
 	    //　通信処理 
-      //ソケットの入力ストリームから文字列を1行読み取る。
+      	//ソケットの入力ストリームから文字列を1行読み取る。
 	    BufferedReader reader = new BufferedReader
 	    	(new InputStreamReader(socket.getInputStream()));
 	    String line = reader.readLine();
