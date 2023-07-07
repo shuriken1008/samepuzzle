@@ -9,5 +9,5 @@
 - 目標点数に先に届いた方が勝者
 
 元ネタ：
-[alt属性](https://dixq.net/sm/img/d9/1.jpg)
+(https://dixq.net/sm/img/d9/1.jpg)
  
