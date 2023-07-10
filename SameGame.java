@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Random;
 
 public class SameGame extends JFrame {
-    private static final int NUM_ROWS = 5;
-    private static final int NUM_COLS = 5;
-    private static final int BLOCK_SIZE = 50;
+    private static final int NUM_ROWS = 20;
+    private static final int NUM_COLS = 20;
+    private static final int BLOCK_SIZE = 30;
     private static final int BOARD_X = 10;
-    private static final int BOARD_Y = 10;
+    private static final int BOARD_Y = 35;
 
     private int[][] board;
     private boolean[][] visited;
@@ -22,7 +22,7 @@ public class SameGame extends JFrame {
     public SameGame() {
         setTitle("SameGame");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(BOARD_X + NUM_COLS * BLOCK_SIZE, BOARD_Y + NUM_ROWS * BLOCK_SIZE);
+        setSize(500, 500);
         setResizable(false);
         setLocationRelativeTo(null);
 
@@ -96,17 +96,49 @@ public class SameGame extends JFrame {
     private void compressBoard() {
         for (int col = 0; col < NUM_COLS; col++) {
             int emptyRow = NUM_ROWS - 1;
+
             for (int row = NUM_ROWS - 1; row >= 0; row--) {
                 if (board[row][col] != 0) {
                     board[emptyRow][col] = board[row][col];
                     emptyRow--;
                 }
             }
-            for (int row = emptyRow; row >= 0; row--) {
-                board[row][col] = 0;
+
+            while (emptyRow >= 0) {
+                board[emptyRow][col] = 0;
+                emptyRow--;
+            }
+        }
+
+        for (int col = 0; col < NUM_COLS; col++) {
+            int emptyRow = NUM_ROWS - 1;
+            boolean columnIsEmpty = true;  // 列が空かどうかを示すフラグ
+
+            for (int row = NUM_ROWS - 1; row >= 0; row--) {
+                if (board[row][col] != 0) {
+                    board[emptyRow][col] = board[row][col];
+                    emptyRow--;
+                    columnIsEmpty = false;
+                }
+            }
+
+            if (columnIsEmpty) {
+                // 列が空の場合、左隣の列を左に詰める
+                for (int shiftCol = col + 1; shiftCol < NUM_COLS; shiftCol++) {
+                    for (int row = 0; row < NUM_ROWS; row++) {
+                        board[row][shiftCol - 1] = board[row][shiftCol];
+                        board[row][shiftCol] = 0;
+                    }
+                }
+            } else {
+                // 列が空でない場合、残りの空行を0で埋める
+                for (int row = emptyRow; row >= 0; row--) {
+                    board[row][col] = 0;
+                }
             }
         }
     }
+
 
     @Override
     public void paint(Graphics g) {
