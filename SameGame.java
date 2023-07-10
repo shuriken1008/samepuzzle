@@ -22,7 +22,7 @@ public class SameGame extends JFrame {
     public SameGame() {
         setTitle("SameGame");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(500, 500);
+        setSize(800, 800);
         setResizable(false);
         setLocationRelativeTo(null);
 
