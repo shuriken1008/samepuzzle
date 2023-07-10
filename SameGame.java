@@ -11,7 +11,7 @@ import java.util.Random;
 public class SameGame extends JFrame {
     private static final int NUM_ROWS = 20;
     private static final int NUM_COLS = 20;
-    private static final int BLOCK_SIZE = 30;
+    private static final int BLOCK_SIZE = 20;
     private static final int BOARD_X = 10;
     private static final int BOARD_Y = 35;
 
@@ -19,14 +19,17 @@ public class SameGame extends JFrame {
     private boolean[][] visited;
     private int score;
 
+    private JLabel scoreLabel;
+
     public SameGame() {
         setTitle("SameGame");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 800);
+        setSize(BOARD_X + NUM_COLS * BLOCK_SIZE+100, BOARD_Y + NUM_ROWS * BLOCK_SIZE+100);
         setResizable(false);
         setLocationRelativeTo(null);
 
         initializeBoard();
+        createScoreLabel();
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -39,6 +42,7 @@ public class SameGame extends JFrame {
                     if (connectedBlocks.size() >= 2) {
                         removeBlocks(connectedBlocks);
                         compressBoard();
+                        scoreLabel.setText("Score: " + score);
                         repaint();
                     }
                 }
@@ -139,6 +143,13 @@ public class SameGame extends JFrame {
         }
     }
 
+    private void createScoreLabel() {
+        scoreLabel = new JLabel("Score: 0");
+        scoreLabel.setBounds(BOARD_X, 0, NUM_COLS * BLOCK_SIZE, BOARD_Y);
+        scoreLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        add(scoreLabel);
+    }
+
 
     @Override
     public void paint(Graphics g) {
@@ -184,3 +195,4 @@ public class SameGame extends JFrame {
         });
     }
 }
+
