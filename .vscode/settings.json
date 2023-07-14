@@ -1,0 +1,6 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "c:\\Users\\shuri\\Downloads\\jackson-core-2.15.2.jar"
+    ]
+}

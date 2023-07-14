@@ -9,6 +9,9 @@ public class Player {
     private int score = 0;
     private Stage mystage;
 
+    private String ipaddr;
+    private int port;
+
 
     public Player(String name){
         this.name = name;

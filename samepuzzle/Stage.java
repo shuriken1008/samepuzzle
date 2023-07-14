@@ -3,6 +3,8 @@ package samepuzzle;
 import java.util.Random;
 import java.util.Scanner;
 
+
+
 public class Stage {
     public static int PINK = 0xff4bb3;
     public static int ORANGE = 0xd67d00;
@@ -11,22 +13,30 @@ public class Stage {
     public static int BLUE = 0x0064d9;
 
 
-    private int plot[][];
+    private int data[][];
     private int stageCount = 0;
 
     public Stage(int size){
-        plot = new int[size][size];
+        data = new int[size][size];
     }
 
 
     public void generateNewStage(){
         Random rand = new Random();
 
-        for(int x=0; x<plot.length; x++){
-            for(int y=0; y<plot.length; y++){
-                plot[x][y] = rand.nextInt(5) + 1;
+        for(int x=0; x<data.length; x++){
+            for(int y=0; y<data.length; y++){
+                data[x][y] = rand.nextInt(5) + 1;
             }
         }
+    }
+
+    public void importStage(int d[][]){
+        data = d.clone();
+    }
+
+    public int[][] exportStage(){
+        return data.clone();
     }
 
     public int breakBlock(int x, int y){
@@ -34,10 +44,10 @@ public class Stage {
         int blockId;
 
         if(isBreakable(x, y)){
-            blockId = plot[x][y];
+            blockId = data[x][y];
 
             totalBlocks = 1;
-            plot[x][y] = 0;
+            data[x][y] = 0;
             totalBlocks += breakBlock(x+1, y, x, y, blockId);
             totalBlocks += breakBlock(x-1, y, x, y, blockId);
             totalBlocks += breakBlock(x, y+1, x, y, blockId);
@@ -46,22 +56,22 @@ public class Stage {
 
 
         }
-        updatePlot();
+        updatedata();
         return totalBlocks;
     }
     private int breakBlock(int x, int y, int beforeX, int beforeY, int blockId){
         int totalBlocks = 0;
         if(
-            x<0 || x >= plot.length ||
-            y<0 || y >= plot[x].length
+            x<0 || x >= data.length ||
+            y<0 || y >= data[x].length
         ){return 0;}
 
-        if(plot[x][y] == blockId){
+        if(data[x][y] == blockId){
             
         
 
             totalBlocks = 1;
-            plot[x][y] = 0;
+            data[x][y] = 0;
             if(x+1 != beforeX){
                 totalBlocks += breakBlock(x+1, y, x, y, blockId);
             }
@@ -82,15 +92,15 @@ public class Stage {
 
     public boolean isBreakable(int x, int y){
         if(
-            x<0 || x >= plot.length ||
-            y<0 || y >= plot[x].length
+            x<0 || x >= data.length ||
+            y<0 || y >= data[x].length
         ){return false;}
 
-        if(plot[x][y] == 0){
+        if(data[x][y] == 0){
             return false;
         }
 
-        int blockId = plot[x][y];
+        int blockId = data[x][y];
         if(
             isBreakable(x+1, y, blockId) || isBreakable(x-1, y, blockId) ||
             isBreakable(x, y+1, blockId) || isBreakable(x, y-1, blockId)
@@ -104,11 +114,11 @@ public class Stage {
     }
     public boolean isBreakable(int x, int y, int blockId){
         if(
-            x<0 || x >= plot.length ||
-            y<0 || y >= plot[x].length
+            x<0 || x >= data.length ||
+            y<0 || y >= data[x].length
         ){return false;}
 
-        if(plot[x][y] == blockId){
+        if(data[x][y] == blockId){
             return true;
         }
 
@@ -136,14 +146,14 @@ public static int[] moveZerosToStart(int[] array) {
         return result;
     }
 
-    public void updatePlot(){
-        for(int y=0; y<plot.length; y++){
-            int[] result = new int[plot.length];
+    public void updatedata(){
+        for(int y=0; y<data.length; y++){
+            int[] result = new int[data.length];
             int index = result.length - 1;
             // 0以外の要素を新しい配列の末尾から詰めていく
-            for (int x = plot.length - 1; x >= 0; x--) {
-                if (plot[x][y] != 0) {
-                    result[index] = plot[x][y];
+            for (int x = data.length - 1; x >= 0; x--) {
+                if (data[x][y] != 0) {
+                    result[index] = data[x][y];
                     index--;
                 }
             }
@@ -153,16 +163,16 @@ public static int[] moveZerosToStart(int[] array) {
                 index--;
             }
 
-            for(int x =0;x<plot.length; x++){
-                plot[x][y] = result[x];
+            for(int x =0;x<data.length; x++){
+                data[x][y] = result[x];
             }
         }
     }
 
     public void isGameOver(){
-        for(int x=0; x<plot.length; x++){
-            for(int y=0; y<plot.length; y++){
-                if(plot[x][y] == 0){
+        for(int x=0; x<data.length; x++){
+            for(int y=0; y<data.length; y++){
+                if(data[x][y] == 0){
                     continue;
                 }else{
 
@@ -172,8 +182,8 @@ public static int[] moveZerosToStart(int[] array) {
     }
 
     public void showStdOut(){
-        for(int x=0; x<plot.length; x++){
-            for(int y:plot[x]){
+        for(int x=0; x<data.length; x++){
+            for(int y:data[x]){
                 String t = "";
                 switch(y){
                     case(0)->{
