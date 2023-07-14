@@ -214,29 +214,8 @@ public static int[] moveZerosToStart(int[] array) {
 
     //DEBUG
     public static void main(String[] args){
-        Stage s = new Stage(10);
-
-        s.generateNewStage();
-        s.showStdOut();
+        GUI game = new GUI();
+        game.
         
-        Scanner scan;
-        String str;
-        int x;
-        int y;
-        while(true){
-            scan = new Scanner(System.in);
-            str = scan.nextLine();
-            
-            
-            String[] ls = str.split(",");
-
-            x = Integer.valueOf(ls[0]);
-            y = Integer.valueOf(ls[1]);
-
-            s.breakBlock(x,y);
-            s.showStdOut();
-            System.out.println();
-            
-        }
     }
 }

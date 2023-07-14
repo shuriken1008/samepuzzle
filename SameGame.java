@@ -95,6 +95,7 @@ public class SameGame extends JFrame {
             visited[row][col] = false;
         }
         score += blocks.size();
+        
     }
 
     private void compressBoard() {
@@ -187,6 +188,36 @@ public class SameGame extends JFrame {
                 return Color.WHITE;
         }
     }
+    public void showStdOut(){
+        for(int x=0; x<data.length; x++){
+            for(int y:data[x]){
+                String t = "";
+                switch(y){
+                    case(0)->{
+                        t = "×";
+                    }
+                    case(1)->{
+                        t = "■";
+                    }
+                    case(2)->{
+                        t = "\u001b[31m■\u001b[0m";
+                    }
+                    case(3)->{
+                        t = "\u001b[32m■\u001b[0m";
+                    }
+                    case(4)->{
+                        t = "\u001b[33m■\u001b[0m";
+                    }
+                    case(5)->{
+                        t = "\u001b[34m■\u001b[0m";
+                    }
+                }
+                System.out.print(t);
+            }
+            System.out.println();
+        }
+    }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
