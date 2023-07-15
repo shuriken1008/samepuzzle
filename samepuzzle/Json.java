@@ -23,6 +23,9 @@ public class Json {
         HashMap<String, Object> hashMap = new HashMap<>();
 
         // JSON文字列から要素を抽出してHashMapに追加
+        if(!json.matches("{.*}")){
+            return null;
+        }
         String[] keyValuePairs = json.replaceAll("[{}\"]", "").split(",");
         for (String pair : keyValuePairs) {
             String[] entry = pair.split(":");
