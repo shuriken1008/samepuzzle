@@ -71,7 +71,8 @@ __Server/通信__
 ```json
 {
     "type": "connect",
-    "player": String,
+    "displayName": String,
+    "uuid": String,
     "roomName": String,
 }
 ```

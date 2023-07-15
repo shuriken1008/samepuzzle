@@ -5,8 +5,11 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
+
 
 public class GUI extends JFrame {
     private static final int NUM_ROWS = 20;
@@ -21,9 +24,15 @@ public class GUI extends JFrame {
     private boolean[][] visited;
     private int score;
 
+    private HashSet<Point> lastConnectedBlocks = new HashSet<>();
+
     private JLabel scoreLabel;
+    private JPanel selectBlockPanel;
 
     private Score s = new Score();
+
+
+
     public GUI() {
         setTitle("SameGame");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -33,6 +42,7 @@ public class GUI extends JFrame {
 
         initializeBoard();
         createScoreLabel();
+        createSelBlockPanel();
 
         //クリック
         addMouseListener(new MouseAdapter() {
@@ -41,19 +51,53 @@ public class GUI extends JFrame {
                 int row = (e.getY() - BOARD_Y) / (BLOCK_SIZE + OFFSET);
                 int col = (e.getX() - BOARD_X) / (BLOCK_SIZE + OFFSET);
 
+                boolean[][] _visited = copyVisited(visited);
+
+                
                 if (row >= 0 && row < NUM_ROWS && col >= 0 && col < NUM_COLS && board[row][col] != 0) {
-                    List<Point> connectedBlocks = findConnectedBlocks(row, col);
-                    if (connectedBlocks.size() >= 2) {
-                        removeBlocks(connectedBlocks);
-                        compressBoard();
-                        scoreLabel.setText("Score: " + score);
-                        repaint();
-                        
+                    
+                    HashSet<Point> connectedBlocks = findConnectedBlocks(row, col);
+
+                    // System.out.println(connectedBlocks.toString());
+                    // System.out.println(lastConnectedBlocks.toString());
+                    boolean f = connectedBlocks.equals(lastConnectedBlocks);
+                    // System.out.println(f);
+                    if(f){
+                        if (connectedBlocks.size() >= 2) {
+                            removeBlocks(connectedBlocks);
+                            compressBoard();
+                            scoreLabel.setText("Score: " + score);
+                            repaint();
+                            
+                        }
+                    
+                    }else{
+                        visited = copyVisited(_visited);
                     }
+
+                    lastConnectedBlocks = new HashSet<Point>(connectedBlocks);
+                        
+
                 }
+
+                
             }
+
         });
     }
+
+    public boolean[][] copyVisited(boolean[][] arr2D){
+        boolean _arr[][] = new boolean[NUM_ROWS][NUM_COLS];
+        for(int x=0; x<NUM_ROWS; x++){
+            for(int y=0; y<NUM_COLS; y++){
+                _arr[x][y] = arr2D[x][y];
+            }
+            
+            
+        }
+        return _arr;
+    }
+
 
     private void initializeBoard() {
         Random random = new Random();
@@ -69,11 +113,11 @@ public class GUI extends JFrame {
         }
     }
 
-    private List<Point> findConnectedBlocks(int startRow, int startCol) {
+    private HashSet<Point> findConnectedBlocks(int startRow, int startCol) {
         int color = board[startRow][startCol];
         visited[startRow][startCol] = true;
 
-        List<Point> connectedBlocks = new ArrayList<>();
+        HashSet<Point> connectedBlocks = new HashSet<>();
         connectedBlocks.add(new Point(startRow, startCol));
 
         if (startRow - 1 >= 0 && board[startRow - 1][startCol] == color && !visited[startRow - 1][startCol]) {
@@ -89,10 +133,10 @@ public class GUI extends JFrame {
             connectedBlocks.addAll(findConnectedBlocks(startRow, startCol + 1));
         }
 
-        return connectedBlocks;
+        return new HashSet<>(connectedBlocks);
     }
 
-    public void removeBlocks(List<Point> blocks) {
+    public void removeBlocks(HashSet<Point> blocks) {
         for (Point block : blocks) {
             int row = block.x;
             int col = block.y;
@@ -101,7 +145,7 @@ public class GUI extends JFrame {
         }
         //score += blocks.size();
         score += s.calc(blocks.size());
-        showStdOut();
+        // showStdOut();
 
     }   
 
@@ -156,6 +200,14 @@ public class GUI extends JFrame {
         scoreLabel.setBounds(BOARD_X, 0, NUM_COLS * BLOCK_SIZE, BOARD_Y);
         scoreLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         add(scoreLabel);
+    }
+
+    private void createSelBlockPanel(){
+        selectBlockPanel = new JPanel();
+        selectBlockPanel.add(new JLabel("ブロック： 0"));
+        selectBlockPanel.setBounds(BOARD_X, 0, NUM_COLS * BLOCK_SIZE, BOARD_Y - 10);
+        
+        add(selectBlockPanel);
     }
 
 
@@ -221,6 +273,21 @@ public class GUI extends JFrame {
                         t = "\u001b[34m■\u001b[0m";
                     }
                 }
+                System.out.print(t);
+            }
+            System.out.println("");
+            
+        }
+        System.out.println("------------------------");
+    }
+
+    public void showStdOutVisit(boolean v[][]){
+        for(int x=0; x<v.length; x++){
+            for(boolean y:v[x]){
+                String t = "";
+                if (y){t="×";
+                }else{t="○";}
+                
                 System.out.print(t);
             }
             System.out.println("");

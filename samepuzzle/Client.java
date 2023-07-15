@@ -22,7 +22,7 @@ public class Client {
     private String uuid;
     private String displayName;
     private String roomName;
-    private Player myData; 
+    private Player playerData; 
     final InetAddress localhost;
     final Socket socket;
     final ObjectInputStream serverToClientStream;
@@ -30,7 +30,7 @@ public class Client {
     final Scanner consoleInputScanner;
     
     public Client(String displayName) throws IOException {
-        myData = new Player(displayName);
+        playerData = new Player(displayName);
 
         localhost = InetAddress.getLocalHost();
         socket = new Socket(localhost, Server.portNumber);
@@ -38,24 +38,77 @@ public class Client {
         clientToServerStream = new ObjectOutputStream(socket.getOutputStream());
         new Thread(
                 () -> {
-                    try {
-                        while (true) {
-                            System.out.println(serverToClientStream.readUTF());
-                        }
-
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    listener();
                 })
                 .start();
         consoleInputScanner = new Scanner(System.in);
     }
 
-    public boolean connect(String roomName) throws IOException{
+    public void listener(){
+        try {
+            while (true) {
+                String payload = serverToClientStream.readUTF();
+                HashMap<String, Object> map = Json.toHashMap(payload);
+                if(map == null){
+                    continue;
+                }
+
+                if(map.get("type") == "playerData"){
+                    this.uuid = (String)map.get("uuid");
+                    
+                }
+                
+                switch((String)map.get("type")){
+                    case("playerData")->{
+                        onPlayerData(map);
+                    }
+                    case("chat")->{
+                        onChat(map);
+                    }
+                    case("blockData")->{
+                        onBlockData(map);
+                    }
+                    case("gameStart")->{
+                        onGameStart(map);
+                    }
+                    case("gameEnd")->{
+                        onGameEnd(map);
+                    }
+                }
+
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void onPlayerData(HashMap<String, Object> map){
+
+    }
+
+    public void onChat(HashMap<String, Object> map){
+
+    }
+
+    public void onBlockData(HashMap<String, Object> map){
+
+    }
+
+    public void onGameStart(HashMap<String, Object> map){
+
+    }
+
+    public void onGameEnd(HashMap<String, Object> map){
+
+    }
+
+    public void connect(String roomName) throws IOException{
         this.roomName = roomName;
         String jStr = Json.toJson(new HashMap<String, Object>(){{
             put("type", "connect");
-            put("player", displayName);
+            put("displayName", displayName);
+            put("uuid", playerData.getUUID());
             put("roomName", roomName);
 
         }   
@@ -67,15 +120,14 @@ public class Client {
         final String message = consoleInputScanner.nextLine();
         HashMap<String, Object> map = Json.toHashMap(message);
         if(map == null){
-            return false;
+            return;
         }
 
         if(map.get("type") == "playerData"){
             this.uuid = (String)map.get("uuid");
-            return true;
+            
         }    
         
-        return false;
         
 
 
@@ -98,7 +150,7 @@ public class Client {
 
     public void changeStatus() throws IOException{
         String jStr = Json.toJson(new HashMap<String, Object>(){{
-            put("type", "statud");
+            put("type", "status");
             put("uuid", uuid);
             
 
@@ -107,6 +159,15 @@ public class Client {
 
         clientToServerStream.writeUTF(jStr);
         clientToServerStream.flush();
+    }
+
+    public void waitStartGame(){
+
+
+    }
+
+    public void startGameHost(){
+
     }
 
     
