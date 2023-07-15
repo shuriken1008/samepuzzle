@@ -8,7 +8,4 @@ public class API {
 
 
 
-    public String connect(String displayName, String roomName){
-
-    }
 }
