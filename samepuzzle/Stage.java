@@ -215,7 +215,7 @@ public static int[] moveZerosToStart(int[] array) {
     //DEBUG
     public static void main(String[] args){
         GUI game = new GUI();
-        game.
+        
         
     }
 }

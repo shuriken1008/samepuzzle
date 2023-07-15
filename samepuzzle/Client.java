@@ -5,7 +5,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.Scanner;
+
 /*
 サーバーの起動
 cd ./src
@@ -16,11 +18,11 @@ cd ./src
 javac --enable-preview --source 20 TCPClient.java
 java --enable-preview TCPClient
  */
-public class HostClient {
+public class Client {
     public static void main(String[] args) throws IOException {
         final InetAddress localhost = InetAddress.getLocalHost();
         System.out.println(
-                "クライアントを起動しました. これから " + localhost + " のポート番号 " + Server.portNumber + "に接続します");
+                "クライアント2を起動しました. これから " + localhost + " のポート番号 " + Server.portNumber + "に接続します");
         final Socket socket = new Socket(localhost, Server.portNumber);
 
         final ObjectInputStream serverToClientStream = new ObjectInputStream(socket.getInputStream());
@@ -41,9 +43,28 @@ public class HostClient {
 
         final Scanner consoleInputScanner = new Scanner(System.in);
 
+
+
+        System.out.print("名前 > ");
+        String name = consoleInputScanner.nextLine();
+
+        System.out.print("部屋名 > ");
+        String roomName = consoleInputScanner.nextLine();
+
+        Json.toJson(new HashMap<String, Object>(){{
+            put("name", name);
+        }
+        });
+
+        clientToServerStream.writeUTF("{\"type\": \"connect\"" + name + "\t" +  roomName);
+
+
         while (true) {
+            
             // コンソールから入力を受け付ける
             final String message = consoleInputScanner.nextLine();
+
+            
             // サーバーにメッセージを送る
             clientToServerStream.writeUTF(message);
             clientToServerStream.flush();

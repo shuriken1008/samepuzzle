@@ -1,61 +1,144 @@
 package samepuzzle;
-
-//チャットサーバープログラム
-//チャットクライアントプログラムからの接続を待つ。
-//接続後は1行の文字列読み取りを行い、接続終了する。
-//java CharServer 99
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+/*
+サーバーの起動
+cd ./src
+javac --enable-preview --source 20 TCPServer.java
+java --enable-preview TCPServer
+クライアントの起動
+cd ./src
+javac --enable-preview --source 20 TcpClient.java
+java --enable-preview TCPClient
+ */
 
-public class Server
-{
-	
+/**
+ * チャット コンソールアプリ の サーバー
+ */
 
-    public static void main(String[] args)
-    {
-		Rooms rooms = new Rooms();
-	try {
-		int port=8888;
-	    ServerSocket srvSock = new ServerSocket(port);
-	    Socket socket = srvSock.accept();
+public class Server {
+    public static int portNumber = 1234;
 
-		String addr;
+    public static void main(String[] args) throws IOException {
+        final ArrayList<Server1ClientThread> serverThreadArrayList = new ArrayList<>();
+        final ServerSocket serverSocket = new ServerSocket(portNumber);
 
+        try {
+            while (true) {
+                System.out.println("新たなクライアントとの接続を待機しています");
+                final Socket socket = serverSocket.accept();
+                System.out.println("新たにクライアントと接続しました!");
+                // クライアントからメッセージを受け取るスレッド
+                final Server1ClientThread lastServerThread = new Server1ClientThread(socket,
+                        // 1つのクライアントからメッセージが来た
+                        (message, clientId) -> {
+                            try {
+                                System.out.print("クライアント(" + clientId + ")から " + message + " を受け取りました");
+                                sendMessageToAllClient(
+                                        new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()) + ": <" + clientId + "> "
+                                                + message,
+                                        serverThreadArrayList);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        },
+                        // 1つのクライアントとの接続が切れた
+                        (disconnected) -> {
+                            try {
+                                sendMessageToAllClient(disconnected + "さんが退出しました", serverThreadArrayList);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
 
-		rooms.createRoom(null, null);
+                serverThreadArrayList.add(lastServerThread);
+                lastServerThread.start();
+                try {
+                    sendMessageToAllClient(lastServerThread.getId() + "さんが参加しました", serverThreadArrayList);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	    //　通信処理
+    /**
+     * サーバーに接続しているすべてのクライアントにメッセージを送信する
+     */
+    static public void sendMessageToAllClient(String message, ArrayList<Server1ClientThread> serverThreadArrayList)
+            throws IOException {
+        for (final Server1ClientThread serverThread : serverThreadArrayList) {
+            if (!serverThread.isDisconnected) {
+                serverThread.sendDataToClient(message);
+            }
+        }
+    }
+}
 
-      	//ソケットの入力ストリームから文字列を1行読み取る。
-	    BufferedReader reader = new BufferedReader
-	    	(new InputStreamReader(socket.getInputStream()));
-	    String[] words = reader.readLine().split(" ");
+/**
+ * 1つのクライアントからメッセージを受け取り, 送信するためのスレッド
+ */
+class Server1ClientThread extends Thread {
+    final Socket socket;
 
+    //ラムダ式で２つの入力を受け付けるクラス
+    final BiConsumer<String, Long> handler;
 
-		
-		switch(words[0]){
-			case("/makeroom")->{
+    final Consumer<Long> onDisconnect;
+    boolean isDisconnected = false;
 
-			}
-		}
+    ObjectOutputStream serverToClientStream = null;
 
-		
+    Server1ClientThread(
+            final Socket socket,
+            final BiConsumer<String, Long> handler,
+            final Consumer<Long> onDisconnect) {
+        System.out.println("Server1ClientThreadを起動します");
+        this.socket = socket;
+        this.handler = handler;
+        this.onDisconnect = onDisconnect;
+    }
 
-		//終了処理　このプログラムは1行読み取ったら終了する。
-		//通信を続けるのであれば、reader.readLine();を
-		//ループするが、終了コマンドをチェックする等の処理を
-		//記述する。
-	    reader.close();
-	    socket.close();
-	    srvSock.close();
-	}
-	catch (IOException e) {
-	    e.printStackTrace();
-	}
-    } 
+    @Override
+    public void run() {
+        try {
+            serverToClientStream = new ObjectOutputStream(socket.getOutputStream());
 
+            final ObjectInputStream clientToServerStream = new ObjectInputStream(socket.getInputStream());
+            while (true) {
+                final String clientToServerData = clientToServerStream.readUTF();
+                logWithId("クライアントから " + clientToServerData + "を受け取りました");
+                handler.accept(clientToServerData, getId());
+            }
+        } catch (IOException e) {
+            isDisconnected = true;
+            onDisconnect.accept(getId());
+        }
+    }
 
+    /**
+     * クライアントにデータを送信する
+     */
+    public void sendDataToClient(final String message) throws IOException {
+        // まだ接続していないときは, 送信しない
+        if (serverToClientStream == null) {
+            return;
+        }
+        serverToClientStream.writeUTF(message);
+        serverToClientStream.flush();
+    }
+
+    private void logWithId(final String message) {
+        System.out.println("[Server1ClientThread id: " + getId() + "] " + message);
+    }
 }

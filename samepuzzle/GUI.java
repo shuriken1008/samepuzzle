@@ -230,6 +230,8 @@ public class GUI extends JFrame {
             GUI game = new GUI();
             game.setVisible(true);
         });
+
+        
     }
 }
 
