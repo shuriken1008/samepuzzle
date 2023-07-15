@@ -15,6 +15,8 @@ public class GUI extends JFrame {
     private static final int BOARD_X = 10;
     private static final int BOARD_Y = 35;
 
+    private static final int OFFSET = 2;
+
     private int[][] board;
     private boolean[][] visited;
     private int score;
@@ -32,11 +34,12 @@ public class GUI extends JFrame {
         initializeBoard();
         createScoreLabel();
 
+        //クリック
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                int row = (e.getY() - BOARD_Y) / BLOCK_SIZE;
-                int col = (e.getX() - BOARD_X) / BLOCK_SIZE;
+                int row = (e.getY() - BOARD_Y) / (BLOCK_SIZE + OFFSET);
+                int col = (e.getX() - BOARD_X) / (BLOCK_SIZE + OFFSET);
 
                 if (row >= 0 && row < NUM_ROWS && col >= 0 && col < NUM_COLS && board[row][col] != 0) {
                     List<Point> connectedBlocks = findConnectedBlocks(row, col);
@@ -45,6 +48,7 @@ public class GUI extends JFrame {
                         compressBoard();
                         scoreLabel.setText("Score: " + score);
                         repaint();
+                        
                     }
                 }
             }
@@ -159,11 +163,12 @@ public class GUI extends JFrame {
     public void paint(Graphics g) {
         super.paint(g);
 
+
         for (int row = 0; row < NUM_ROWS; row++) {
             for (int col = 0; col < NUM_COLS; col++) {
                 int blockColor = board[row][col];
-                int x = BOARD_X + col * BLOCK_SIZE;
-                int y = BOARD_Y + row * BLOCK_SIZE;
+                int y = BOARD_Y + row * (BLOCK_SIZE + OFFSET);
+                int x = BOARD_X + col * (BLOCK_SIZE + OFFSET);
 
                 if (blockColor != 0) {
                     g.setColor(getColor(blockColor));
@@ -231,7 +236,7 @@ public class GUI extends JFrame {
             game.setVisible(true);
         });
 
-        
+
     }
 }
 
