@@ -6,7 +6,7 @@
 
 ***通信要素***
 - 対戦型マルチプレイを実装：
-- 目標点数に先に届いた方が勝者
+- 目標点数に1番最初に届いた方が勝者
 
 
 ***やること***
@@ -52,7 +52,7 @@ __Server/通信__
 ```json
 {
     "type": "blockData",
-    "data": int,
+    "data": String //2次配列をそのまま文字列変換
 }
 ```
 
@@ -88,7 +88,7 @@ __Server/通信__
 ```json
 {
     "type": "status",
-    "uuid": 
+    "uuid": String
 }
 ```
 
@@ -100,14 +100,15 @@ __Server/通信__
 ```json
 {
     "type": "gameStart",
-    "startAt": int, //エポック秒
+    "startAt": int, //エポック秒,
+    "targetScore": int
 }
 ```
 - ゲーム終了
 ```json
 {
     "type": "gameEnd",
-    "winner": String,
+    "winnerUUID": String,
     "hiScore": int
 }
 ```
