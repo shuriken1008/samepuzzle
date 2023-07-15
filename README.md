@@ -23,9 +23,95 @@ __Server/通信__
 
 ***通信プロトコル***
 - すべてjson
-- type <*required*>
-    - connect
-    - 
+
+# 共通
+- 部屋でチャットする
+```json
+{
+    "type": "chat",
+    "displayName": String,
+    "content": String
+}
+```
+
+- プレイヤーデータ
+```json
+{
+    "type": "playerData",
+    "displayName": String,
+    "uuid": String,
+    "isOwner": Boolean,
+    "isPlaying": Boolean,
+    "isWaiting": Boolean,
+    "score": int,
+    "rank": int
+}
+```
+
+- ブロックデータ
+```json
+{
+    "type": "blockData",
+    "data": int,
+}
+```
+
+- 破壊するブロックの座標
+```json
+{
+    "type": "breakData",
+    "x": int,
+    "y": int
+}
+```
+
+
+# クライアント -> サーバー
+- 接続を開始する
+```json
+{
+    "type": "connect",
+    "player": String,
+    "roomName": String,
+}
+```
+
+- 部屋を退出=接続を終了する
+```json
+{
+    "type": "disconnect",
+    "uuid": String,
+}
+```
+
+- ステータス変更(ゲーム開始宣言・準備完了宣言)
+```json
+{
+    "type": "status",
+    "uuid": 
+}
+```
+
+
+
+
+# サーバー -> クライアント
+- ゲーム開始
+```json
+{
+    "type": "gameStart",
+    "startAt": int, //エポック秒
+}
+```
+- ゲーム終了
+```json
+{
+    "type": "gameEnd",
+    "winner": String,
+    "hiScore": int
+}
+```
+
 
 
 ***元ネタ：***
