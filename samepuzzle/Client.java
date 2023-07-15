@@ -53,7 +53,8 @@ public class Client {
 
         Json.toJson(new HashMap<String, Object>(){{
             put("name", name);
-        }
+            put("roomName", roomName);
+        }   
         });
 
         clientToServerStream.writeUTF("{\"type\": \"connect\"" + name + "\t" +  roomName);
