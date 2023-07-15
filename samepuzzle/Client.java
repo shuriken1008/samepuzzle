@@ -172,7 +172,7 @@ public class Client {
 
         
         Client client = new Client(name);
-        client.
+        client.connect(name);
         
 
 

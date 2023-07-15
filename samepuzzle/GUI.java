@@ -2,6 +2,7 @@
 
 package samepuzzle;
 
+import javax.sound.sampled.AudioInputStream;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -30,8 +31,10 @@ public class GUI extends JFrame {
 
     private JLabel scoreLabel;
     private JPanel selectBlockPanel;
+    private JPanel boardPanel;
 
     private Score s = new Score();
+    AudioInputStream ais
 
 
 
@@ -59,6 +62,8 @@ public class GUI extends JFrame {
                 if (row >= 0 && row < NUM_ROWS && col >= 0 && col < NUM_COLS && board[row][col] != 0) {
                     
                     HashSet<Point> connectedBlocks = findConnectedBlocks(row, col);
+                    ((JLabel) selectBlockPanel.getComponent(0)).setText("ブロック: " + connectedBlocks.size());
+                    
 
                     // System.out.println(connectedBlocks.toString());
                     // System.out.println(lastConnectedBlocks.toString());
@@ -68,7 +73,8 @@ public class GUI extends JFrame {
                         if (connectedBlocks.size() >= 2) {
                             removeBlocks(connectedBlocks);
                             compressBoard();
-                            scoreLabel.setText("Score: " + score);
+                            
+                            ((JLabel) selectBlockPanel.getComponent(1)).setText("スコア: " + score);
                             repaint();
                             
                         }
@@ -106,6 +112,8 @@ public class GUI extends JFrame {
         board = new int[NUM_ROWS][NUM_COLS];
         visited = new boolean[NUM_ROWS][NUM_COLS];
         score = 0;
+
+        boardPanel = new JPanel();
 
         for (int row = 0; row < NUM_ROWS; row++) {
             for (int col = 0; col < NUM_COLS; col++) {
@@ -207,6 +215,7 @@ public class GUI extends JFrame {
     private void createSelBlockPanel(){
         selectBlockPanel = new JPanel();
         selectBlockPanel.add(new JLabel("ブロック： 0"));
+        selectBlockPanel.add(new JLabel("スコア： 0"));
         selectBlockPanel.setBounds(BOARD_X, 0, NUM_COLS * BLOCK_SIZE, BOARD_Y - 10);
         
         add(selectBlockPanel);
@@ -215,7 +224,9 @@ public class GUI extends JFrame {
 
     @Override
     public void paint(Graphics g) {
-        super.paint(g);
+        //super.paint(g);
+        g.setColor(Color.WHITE);
+        g.fillRect(0,0,BOARD_X + NUM_COLS * BLOCK_SIZE+100, BOARD_Y + NUM_ROWS * BLOCK_SIZE+100);
 
 
         for (int row = 0; row < NUM_ROWS; row++) {
