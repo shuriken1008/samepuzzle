@@ -24,8 +24,8 @@ __Server/通信__
 ***通信プロトコル***
 - すべてjson
 - type <*required*>
-- - connect
-- -
+    - connect
+    - 
 
 
 ***元ネタ：***
