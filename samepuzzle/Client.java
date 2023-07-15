@@ -51,13 +51,16 @@ public class Client {
         System.out.print("部屋名 > ");
         String roomName = consoleInputScanner.nextLine();
 
-        Json.toJson(new HashMap<String, Object>(){{
+        //jsonに変換
+        String jStr = Json.toJson(new HashMap<String, Object>(){{
+            put("type", "connect");
             put("name", name);
             put("roomName", roomName);
+
         }   
         });
 
-        clientToServerStream.writeUTF("{\"type\": \"connect\"" + name + "\t" +  roomName);
+        clientToServerStream.writeUTF(jStr);
 
 
         while (true) {
