@@ -12,10 +12,12 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-public class Sound{
+public class Sound implements Runnable{
     private AudioInputStream stream;
     private byte[] buf;
     private AudioFormat format;
+
+    private boolean isLoop;
 
     public Sound(String fileName) {
         loadWavFile(fileName);
@@ -72,9 +74,49 @@ public class Sound{
 
     }
 
+    public long playWavLoop() throws InterruptedException{
+        Thread t = new Thread(
+                () -> {
+                    while (isLoop){
+                        long nBytesRead=format.getFrameSize()*stream.getFrameLength();
+
+                        // Construct a DataLine.Info object from the format.
+                        DataLine.Info info=new DataLine.Info(SourceDataLine.class,format);
+                        SourceDataLine line;
+                        try {
+                            line = (SourceDataLine)AudioSystem.getLine(info);
+                            // Open and start the line.
+                            line.open(format);
+                            line.start();
+
+                            // Write the data out to the line.
+                            line.write(buf,0,(int)nBytesRead);
+
+                            // Drain and close the line.
+                            line.drain();
+                            line.close();
+                        } catch (LineUnavailableException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                            break;
+                        }
+                    }
+                });
+        
+        t.start();
+        return t.getId();
+        
+    }
+
     public static void main(String[] args){
         Sound s = new Sound("./samepuzzle/select.wav");
 
         s.playWav();
+    }
+
+    @Override
+    public void run() {
+        // TODO Auto-generated method stub
+        
     }
 }
