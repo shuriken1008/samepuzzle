@@ -1,3 +1,4 @@
+package samegame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,11 +9,11 @@ import java.util.List;
 import java.util.Random;
 
 public class SameGame extends JFrame {
-    private static final int NUM_ROWS = 20;
-    private static final int NUM_COLS = 20;
+    private static final int NUM_ROWS = 10;
+    private static final int NUM_COLS = 10;
     private static final int BLOCK_SIZE = 20;
     private static final int BOARD_X = 10;
-    private static final int BOARD_Y = 35;
+    private static final int BOARD_Y = 60;
 
     private int[][] board;
     private boolean[][] visited;
@@ -23,7 +24,7 @@ public class SameGame extends JFrame {
     public SameGame() {
         setTitle("SameGame");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(BOARD_X + NUM_COLS * BLOCK_SIZE+100, BOARD_Y + NUM_ROWS * BLOCK_SIZE+100);
+        setSize(BOARD_X + NUM_COLS * BLOCK_SIZE + 100, BOARD_Y + NUM_ROWS * BLOCK_SIZE + 100);
         setResizable(false);
         setLocationRelativeTo(null);
 
@@ -49,7 +50,7 @@ public class SameGame extends JFrame {
         });
     }
 
-    private void initializeBoard() {
+        private void initializeBoard () {
         Random random = new Random();
         board = new int[NUM_ROWS][NUM_COLS];
         visited = new boolean[NUM_ROWS][NUM_COLS];
@@ -57,13 +58,13 @@ public class SameGame extends JFrame {
 
         for (int row = 0; row < NUM_ROWS; row++) {
             for (int col = 0; col < NUM_COLS; col++) {
-                board[row][col] = random.nextInt(5) + 1; // Generate a random number between 1 and 5
+                board[row][col] = random.nextInt(5) + 1;
                 visited[row][col] = false;
             }
         }
     }
 
-    private List<Point> findConnectedBlocks(int startRow, int startCol) {
+        private List<Point> findConnectedBlocks ( int startRow, int startCol){
         int color = board[startRow][startCol];
         visited[startRow][startCol] = true;
 
@@ -86,7 +87,7 @@ public class SameGame extends JFrame {
         return connectedBlocks;
     }
 
-    private void removeBlocks(List<Point> blocks) {
+        private void removeBlocks (List < Point > blocks) {
         for (Point block : blocks) {
             int row = block.x;
             int col = block.y;
@@ -94,10 +95,9 @@ public class SameGame extends JFrame {
             visited[row][col] = false;
         }
         score += blocks.size();
-        
     }
 
-    private void compressBoard() {
+        private void compressBoard () {
         for (int col = 0; col < NUM_COLS; col++) {
             int emptyRow = NUM_ROWS - 1;
 
@@ -143,16 +143,30 @@ public class SameGame extends JFrame {
         }
     }
 
+    //label
     private void createScoreLabel() {
+        // プレイヤー名入力用ダイアログの表示
+        String playerName = JOptionPane.showInputDialog(this, "Enter your name:");
+
+        JPanel scorePanel = new JPanel();
+
+        JLabel nameLabel = new JLabel("Player: " + playerName);
+        nameLabel.setHorizontalAlignment(SwingConstants.LEFT);
+
         scoreLabel = new JLabel("Score: 0");
-        scoreLabel.setBounds(BOARD_X, 0, NUM_COLS * BLOCK_SIZE, BOARD_Y);
         scoreLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        add(scoreLabel);
+
+        scorePanel.add(nameLabel);
+        scorePanel.add(scoreLabel);
+
+        scorePanel.setBounds(BOARD_X, 0, NUM_COLS * BLOCK_SIZE, BOARD_Y);
+        add(scorePanel);
     }
 
 
+
     @Override
-    public void paint(Graphics g) {
+        public void paint (Graphics g){
         super.paint(g);
 
         for (int row = 0; row < NUM_ROWS; row++) {
@@ -171,7 +185,7 @@ public class SameGame extends JFrame {
         }
     }
 
-    private Color getColor(int blockColor) {
+        private Color getColor ( int blockColor){
         switch (blockColor) {
             case 1:
                 return Color.RED;
@@ -188,12 +202,11 @@ public class SameGame extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
+        public static void main (String[]args){
         SwingUtilities.invokeLater(() -> {
             SameGame game = new SameGame();
             game.setVisible(true);
         });
     }
+
 }
-
-
