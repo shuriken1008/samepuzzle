@@ -3,10 +3,12 @@
 package samepuzzle;
 
 import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -31,10 +33,14 @@ public class GUI extends JFrame {
 
     private JLabel scoreLabel;
     private JPanel selectBlockPanel;
-    private JPanel boardPanel;
+    private JPanel boardPanel;  
 
     private Score s = new Score();
-    AudioInputStream ais
+
+    private Sound SESelect = new Sound("./SE/select.wav");
+    private Sound SEBrake = new Sound("./SE/b2.wav");
+    
+    
 
 
 
@@ -71,6 +77,7 @@ public class GUI extends JFrame {
                     // System.out.println(f);
                     if(f){
                         if (connectedBlocks.size() >= 2) {
+                            SEBrake.playWav();
                             removeBlocks(connectedBlocks);
                             compressBoard();
                             
@@ -80,6 +87,7 @@ public class GUI extends JFrame {
                         }
                     
                     }else{
+                        SESelect.playWav();
                         visited = copyVisited(_visited);
                     }
 
