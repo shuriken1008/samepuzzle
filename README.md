@@ -34,7 +34,7 @@ __Server/通信__
 ```json
 {
     "type": "chat",
-    "displayName": String,
+    "uuid": String,
     "content": String
 }
 ```
