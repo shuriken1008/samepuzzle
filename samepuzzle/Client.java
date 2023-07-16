@@ -160,6 +160,8 @@ public class Client {
 
     
 
+    
+
 
     public static void main(String[] args) throws IOException {
 
@@ -174,17 +176,5 @@ public class Client {
         Client client = new Client(name);
         client.connect(name);
         
-
-
-
-
-        while (true) {
-            
-            // コンソールから入力を受け付ける
-            final String message = consoleInputScanner.nextLine();
-
-            
-            // サーバーにメッセージを送る
-        }
     }
 }

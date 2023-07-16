@@ -7,6 +7,23 @@ public class Rooms {
     //<部屋名, Roomクラス>
     private Map<String, Room> roomMap = new HashMap<>(); 
 
+    public Rooms(){
+        
+    }
+
+
+    //passwd無し
+    public boolean createRoom(String name){
+        Room r = new Room(name, "");
+        if(roomMap.get(name) == null){
+            roomMap.put(name, r);
+            return true;     
+        }else{
+            return false;
+        }
+    }
+
+    //passwdあり
     public boolean createRoom(String name, String passwd){
         Room r = new Room(name, passwd);
         if(roomMap.get(name) == null){
