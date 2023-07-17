@@ -26,4 +26,8 @@ public class Player {
     public String getUUID(){   
         return uuid;
     }
+
+    public String getDisplayName(){
+        return displayName;
+    }
 }

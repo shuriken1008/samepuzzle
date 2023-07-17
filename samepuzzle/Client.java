@@ -19,14 +19,12 @@ javac --enable-preview --source 20 TCPClient.java
 java --enable-preview TCPClient
  */
 public class Client {
-    private String uuid;
-    private String displayName;
-    private String roomName;
     private Player playerData; 
     final InetAddress localhost;
     final Socket socket;
     final ObjectInputStream serverToClientStream;
     final ObjectOutputStream clientToServerStream;
+    private String roomName;
     
     public Client(String displayName) throws IOException {
         playerData = new Player(displayName);
@@ -52,10 +50,6 @@ public class Client {
                     continue;
                 }
 
-                if(map.get("type") == "playerData"){
-                    this.uuid = (String)map.get("uuid");
-                    
-                }
                 
                 switch((String)map.get("type")){
                     case("playerData")->{
@@ -106,7 +100,7 @@ public class Client {
         this.roomName = roomName;
         String jStr = Json.toJson(new HashMap<String, Object>(){{
             put("type", "connect");
-            put("displayName", displayName);
+            put("displayName", playerData.getDisplayName());
             put("uuid", playerData.getUUID());
             put("roomName", roomName);
 
@@ -125,7 +119,7 @@ public class Client {
     public void disconnect() throws IOException{
         String jStr = Json.toJson(new HashMap<String, Object>(){{
             put("type", "disconnect");
-            put("uuid", uuid);
+            put("uuid", playerData.getUUID());
             
 
         }   
@@ -139,7 +133,7 @@ public class Client {
     public void changeStatus() throws IOException{
         String jStr = Json.toJson(new HashMap<String, Object>(){{
             put("type", "status");
-            put("uuid", uuid);
+            put("uuid", playerData.getUUID());
             
 
         }   
@@ -150,7 +144,7 @@ public class Client {
     }
 
     public void waitStartGame(){
-
+        
 
     }
 
@@ -165,6 +159,8 @@ public class Client {
 
     public static void main(String[] args) throws IOException {
 
+        GUI gui = new GUI();
+
         Scanner consoleInputScanner = new Scanner(System.in);
         System.out.print("名前 > ");
         String name = consoleInputScanner.nextLine();
@@ -174,7 +170,7 @@ public class Client {
 
         
         Client client = new Client(name);
-        client.connect(name);
+        client.connect(roomeName);
         
     }
 }

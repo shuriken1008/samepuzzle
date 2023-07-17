@@ -5,11 +5,13 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.Queue;
 /*
 サーバーの起動
 cd ./src
@@ -28,11 +30,16 @@ java --enable-preview TCPClient
 public class Server {
     public static int portNumber = 1234;
     private Rooms rooms = new Rooms();
-    private final HashMap<String, Server1ClientThread> serverThreadMap = new HashMap<>();
+
+    //<threadid, thread>
+    private static HashMap<Long, Server1ClientThread> serverThreadMap = new HashMap<>();
+
+    private static HashMap<String, String> uuidToThreadIdMap = new HashMap<>();
     
+    private static ArrayList<Server1ClientThread> serverThreadArrayList = new ArrayList<>();
 
     public static void main(String[] args) throws IOException {
-        final ArrayList<Server1ClientThread> serverThreadArrayList = new ArrayList<>();
+        
         final ServerSocket serverSocket = new ServerSocket(portNumber);
         
 
@@ -56,68 +63,63 @@ public class Server {
                             }
                         });
 
-                serverThreadArrayList.add(lastServerThread);
+                serverThreadMap.put(lastServerThread.getId(), lastServerThread);
                 lastServerThread.start();
-                try {
-                    sendMessageToAllClient(lastServerThread.getId() + "さんが参加しました", serverThreadArrayList);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    public void listener(long clientId, String message){
-        try {
-            System.out.print("クライアント(" + clientId + ")から " + message + " を受け取りました");
-            sendMessageToAllClient(
-                    new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()) + ": <" + clientId + "> "
-                            + message,
-                    serverThreadArrayList);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            while (true) {
-                String payload = serverToClientStream.readUTF();
-                HashMap<String, Object> map = Json.toHashMap(payload);
-                if(map == null){
-                    continue;
-                }
-
-                if(map.get("type") == "playerData"){
-                    this.uuid = (String)map.get("uuid");
-                    
-                }
                 
-                switch((String)map.get("type")){
-                    case("playerData")->{
-                        onPlayerData(map);
-                    }
-                    case("chat")->{
-                        onChat(map);
-                    }
-                    case("blockData")->{
-                        onBlockData(map);
-                    }
-                    case("gameStart")->{
-                        onGameStart(map);
-                    }
-                    case("gameEnd")->{
-                        onGameEnd(map);
-                    }
-                }
-
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public static void listener(long clientId, String message){
+        try {
+            HashMap<String, Object> map = Json.toHashMap(message);
+            if(map == null){
+                return;
+            }
+
+            
+            switch((String)map.get("type")){
+                case("playerData")->{
+                    onPlayerData(map);
+                }
+                case("chat")->{
+                    sendMessageToAllClient(message, serverThreadArrayList);
+                }
+                case("connect")->{
+                    onPlayerConnect(map);
+                }
+                case("disconnect")->{
+                    onPlayerDisconnect(map);
+                }
+                case("status")->{
+                    onStatus(map);
+                }
+            }
+
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    public static void onPlayerData(HashMap<String, Object> map){
+
+    }
+
+    public static void onPlayerConnect(HashMap<String, Object> map){
+
+    }
+
+    public static void onPlayerDisconnect(HashMap<String, Object> map){
+
+    }
+
+    public static void onStatus(HashMap<String, Object> map){
+
+    }
 
 
 

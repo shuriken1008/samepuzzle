@@ -1,4 +1,4 @@
-package samegame;
+
 
 import javax.swing.*;
 import java.awt.*;

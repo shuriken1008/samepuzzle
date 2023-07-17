@@ -45,7 +45,7 @@ public class GUI extends JFrame {
 
 
     public GUI() {
-        setTitle("SameGame");
+        setTitle("セイムパズル");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(BOARD_X + NUM_COLS * BLOCK_SIZE+100, BOARD_Y + NUM_ROWS * BLOCK_SIZE+100);
         setResizable(false);
@@ -214,10 +214,23 @@ public class GUI extends JFrame {
     }
 
     private void createScoreLabel() {
+        // プレイヤー名入力用ダイアログの表示
+        String playerName = JOptionPane.showInputDialog(this, "Enter your name:");
+        String roomName = JOptionPane.showInputDialog(this, "部屋名を入力してください。");
+
+        JPanel scorePanel = new JPanel();
+
+        JLabel nameLabel = new JLabel("Player: " + playerName);
+        nameLabel.setHorizontalAlignment(SwingConstants.LEFT);
+
         scoreLabel = new JLabel("Score: 0");
-        scoreLabel.setBounds(BOARD_X, 0, NUM_COLS * BLOCK_SIZE, BOARD_Y);
         scoreLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        add(scoreLabel);
+
+        scorePanel.add(nameLabel);
+        scorePanel.add(scoreLabel);
+
+        scorePanel.setBounds(BOARD_X, 0, NUM_COLS * BLOCK_SIZE, BOARD_Y);
+        add(scorePanel);
     }
 
     private void createSelBlockPanel(){
