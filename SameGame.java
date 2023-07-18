@@ -197,6 +197,7 @@ public class SameGame extends JFrame {
                             scoreLabel.setText("Score: " + score);
                             repaint();
                         } else if (checkAdjacentBlocks(row, col)) {////上下左右に同じ色のブロックがなかった時に再スタート
+                            showReStartMessage();
                             initializeBoard();
                             repaint();
                         }
@@ -259,6 +260,10 @@ public class SameGame extends JFrame {
             default:
                 return Color.WHITE;
         }
+    }
+
+    private void showReStartMessage() {
+        JOptionPane.showMessageDialog(this, "No more removable blocks. ReStart.");
     }
 
     public static void main(String[] args) {
