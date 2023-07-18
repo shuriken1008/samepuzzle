@@ -1,4 +1,4 @@
-
+package samegame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,29 +28,18 @@ public class SameGame extends JFrame {
         setResizable(false);
         setLocationRelativeTo(null);
 
-        initializeBoard();
-        createScoreLabel();
-
+        //タイトル
+        setContentPane(new TitleScreenPanel());
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                int row = (e.getY() - BOARD_Y) / BLOCK_SIZE;
-                int col = (e.getX() - BOARD_X) / BLOCK_SIZE;
-
-                if (row >= 0 && row < NUM_ROWS && col >= 0 && col < NUM_COLS && board[row][col] != 0) {
-                    List<Point> connectedBlocks = findConnectedBlocks(row, col);
-                    if (connectedBlocks.size() >= 2) {
-                        removeBlocks(connectedBlocks);
-                        compressBoard();
-                        scoreLabel.setText("Score: " + score);
-                        repaint();
-                    }
-                }
+                setContentPane(new GamePanel());
+                revalidate();
             }
         });
     }
 
-        private void initializeBoard () {
+    private void initializeBoard() {
         Random random = new Random();
         board = new int[NUM_ROWS][NUM_COLS];
         visited = new boolean[NUM_ROWS][NUM_COLS];
@@ -64,7 +53,7 @@ public class SameGame extends JFrame {
         }
     }
 
-        private List<Point> findConnectedBlocks ( int startRow, int startCol){
+    private List<Point> findConnectedBlocks(int startRow, int startCol) {
         int color = board[startRow][startCol];
         visited[startRow][startCol] = true;
 
@@ -87,7 +76,27 @@ public class SameGame extends JFrame {
         return connectedBlocks;
     }
 
-        private void removeBlocks (List < Point > blocks) {
+    //指定された位置のブロックの上下左右に同じ色のブロックが隣接しているかどうかをチェック
+    private boolean checkAdjacentBlocks(int row, int col) {
+        int color = board[row][col];
+
+        if (row - 1 >= 0 && board[row - 1][col] == color) {
+            return false;
+        }
+        if (row + 1 < NUM_ROWS && board[row + 1][col] == color) {
+            return false;
+        }
+        if (col - 1 >= 0 && board[row][col - 1] == color) {
+            return false;
+        }
+        if (col + 1 < NUM_COLS && board[row][col + 1] == color) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private void removeBlocks(List<Point> blocks) {
         for (Point block : blocks) {
             int row = block.x;
             int col = block.y;
@@ -97,7 +106,7 @@ public class SameGame extends JFrame {
         score += blocks.size();
     }
 
-        private void compressBoard () {
+    private void compressBoard() {
         for (int col = 0; col < NUM_COLS; col++) {
             int emptyRow = NUM_ROWS - 1;
 
@@ -116,7 +125,7 @@ public class SameGame extends JFrame {
 
         for (int col = 0; col < NUM_COLS; col++) {
             int emptyRow = NUM_ROWS - 1;
-            boolean columnIsEmpty = true;  // 列が空かどうかを示すフラグ
+            boolean columnIsEmpty = true;
 
             for (int row = NUM_ROWS - 1; row >= 0; row--) {
                 if (board[row][col] != 0) {
@@ -127,7 +136,6 @@ public class SameGame extends JFrame {
             }
 
             if (columnIsEmpty) {
-                // 列が空の場合、左隣の列を左に詰める
                 for (int shiftCol = col + 1; shiftCol < NUM_COLS; shiftCol++) {
                     for (int row = 0; row < NUM_ROWS; row++) {
                         board[row][shiftCol - 1] = board[row][shiftCol];
@@ -135,7 +143,6 @@ public class SameGame extends JFrame {
                     }
                 }
             } else {
-                // 列が空でない場合、残りの空行を0で埋める
                 for (int row = emptyRow; row >= 0; row--) {
                     board[row][col] = 0;
                 }
@@ -143,9 +150,83 @@ public class SameGame extends JFrame {
         }
     }
 
-    //label
+    //タイトル
+    private class TitleScreenPanel extends JPanel {
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+
+            g.setColor(Color.BLACK);
+            g.setFont(new Font("Arial", Font.BOLD, 36));
+
+            Dimension size = getSize();
+            FontMetrics fm = g.getFontMetrics();
+
+            int x = (size.width - fm.stringWidth("SameGame")) / 2;
+            int y = (size.height - fm.getHeight()) / 2 + fm.getAscent();
+
+            g.drawString("SameGame", x, y);
+
+            g.setFont(new Font("Arial", Font.PLAIN, 20));
+            fm = g.getFontMetrics();
+
+            x = (size.width - fm.stringWidth("Click to start")) / 2;
+            y += fm.getHeight() + 20;
+
+            g.drawString("Click to start", x, y);
+        }
+    }
+
+
+    private class GamePanel extends JPanel {
+        public GamePanel() {
+            initializeBoard();
+            createScoreLabel();
+
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    int row = (e.getY() - BOARD_Y) / BLOCK_SIZE;
+                    int col = (e.getX() - BOARD_X) / BLOCK_SIZE;
+
+                    if (row >= 0 && row < NUM_ROWS && col >= 0 && col < NUM_COLS && board[row][col] != 0) {
+                        List<Point> connectedBlocks = findConnectedBlocks(row, col);
+                        if (connectedBlocks.size() >= 2) {
+                            removeBlocks(connectedBlocks);
+                            compressBoard();
+                            scoreLabel.setText("Score: " + score);
+                            repaint();
+                        } else if (checkAdjacentBlocks(row, col)) {////上下左右に同じ色のブロックがなかった時に再スタート
+                            initializeBoard();
+                            repaint();
+                        }
+                    }
+                }
+            });
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+
+            for (int row = 0; row < NUM_ROWS; row++) {
+                for (int col = 0; col < NUM_COLS; col++) {
+                    int blockColor = board[row][col];
+                    int x = BOARD_X + col * BLOCK_SIZE;
+                    int y = BOARD_Y + row * BLOCK_SIZE;
+
+                    if (blockColor != 0) {
+                        g.setColor(getColor(blockColor));
+                        g.fillRect(x, y, BLOCK_SIZE, BLOCK_SIZE);
+                        g.setColor(Color.BLACK);
+                        g.drawRect(x, y, BLOCK_SIZE, BLOCK_SIZE);
+                    }
+                }
+            }
+        }
+    }
+
     private void createScoreLabel() {
-        // プレイヤー名入力用ダイアログの表示
         String playerName = JOptionPane.showInputDialog(this, "Enter your name:");
 
         JPanel scorePanel = new JPanel();
@@ -163,29 +244,7 @@ public class SameGame extends JFrame {
         add(scorePanel);
     }
 
-
-
-    @Override
-        public void paint (Graphics g){
-        super.paint(g);
-
-        for (int row = 0; row < NUM_ROWS; row++) {
-            for (int col = 0; col < NUM_COLS; col++) {
-                int blockColor = board[row][col];
-                int x = BOARD_X + col * BLOCK_SIZE;
-                int y = BOARD_Y + row * BLOCK_SIZE;
-
-                if (blockColor != 0) {
-                    g.setColor(getColor(blockColor));
-                    g.fillRect(x, y, BLOCK_SIZE, BLOCK_SIZE);
-                    g.setColor(Color.BLACK);
-                    g.drawRect(x, y, BLOCK_SIZE, BLOCK_SIZE);
-                }
-            }
-        }
-    }
-
-        private Color getColor ( int blockColor){
+    private Color getColor(int blockColor) {
         switch (blockColor) {
             case 1:
                 return Color.RED;
@@ -202,11 +261,10 @@ public class SameGame extends JFrame {
         }
     }
 
-        public static void main (String[]args){
+    public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             SameGame game = new SameGame();
             game.setVisible(true);
         });
     }
-
 }
