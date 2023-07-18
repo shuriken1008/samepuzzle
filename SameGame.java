@@ -28,6 +28,7 @@ public class SameGame extends JFrame {
         setResizable(false);
         setLocationRelativeTo(null);
 
+        //タイトル
         setContentPane(new TitleScreenPanel());
         addMouseListener(new MouseAdapter() {
             @Override
@@ -75,6 +76,7 @@ public class SameGame extends JFrame {
         return connectedBlocks;
     }
 
+    //指定された位置のブロックの上下左右に同じ色のブロックが隣接しているかどうかをチェック
     private boolean checkAdjacentBlocks(int row, int col) {
         int color = board[row][col];
 
@@ -148,6 +150,7 @@ public class SameGame extends JFrame {
         }
     }
 
+    //タイトル
     private class TitleScreenPanel extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {
@@ -174,7 +177,7 @@ public class SameGame extends JFrame {
         }
     }
 
-
+    //タイトルクリックした後
     private class GamePanel extends JPanel {
         public GamePanel() {
             initializeBoard();
@@ -208,7 +211,6 @@ public class SameGame extends JFrame {
                                     break;
                                 }
                             }
-
                             if (allBlocksAreAdjacent) {
                                 showReStartMessage();
                                 initializeBoard();
