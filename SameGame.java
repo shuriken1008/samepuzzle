@@ -278,6 +278,7 @@ public class SameGame extends JFrame {
         }
     }
 
+    //消せるブロックがなくなったとき表示されるメッセージ
     private void showReStartMessage() {
         JOptionPane.showMessageDialog(this, "No more removable blocks. ReStart.");
     }
