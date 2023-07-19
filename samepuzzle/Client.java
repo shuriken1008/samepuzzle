@@ -53,7 +53,7 @@ public class Client {
                 if(map == null){
                     continue;
                 }
-
+                System.out.println(payload);
                 
                 switch((String)map.get("type")){
                     case("playerData")->{

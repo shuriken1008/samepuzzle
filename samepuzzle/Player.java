@@ -69,6 +69,7 @@ public class Player {
 
     public String toJson(){
         HashMap<String, Object> map = new HashMap<>(){{
+            put("type", "playerData");
             put("uuid", uuid);
             put("displayName", displayName);
             put("isOwner", isOwner);
