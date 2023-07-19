@@ -10,6 +10,7 @@ public class Score{
     private int increase = 25;
     private int[] scoreArr;
 
+    //初期化
     public Score(){
         
         scoreArr = new int[100];

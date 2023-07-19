@@ -110,6 +110,7 @@ public class Server {
         }
     }
 
+    //準備OK/NGを受け取る
     public static void onPlayerData(HashMap<String, Object> map){
         Boolean isReady = (Boolean)map.get("isReady");
         String uuid = (String)map.get("uuid");
@@ -119,6 +120,8 @@ public class Server {
         
         Player p = r.getPlayer(uuid);
         p.setReady(isReady);
+
+        gameStart(r);
 
     }
 
@@ -136,8 +139,20 @@ public class Server {
     }
 
     public static void onBreakData(HashMap<String, Object> map){
+        String roomName = (String)map.get("roomName");
+        Room r = rooms.getRoom(roomName);
+        
+        String uuid = (String)map.get("uuid");
+        int score = (int)map.get("score");
         int x = (int)map.get("x");
         int y = (int)map.get("y");
+
+        //不正チェック(実装しない)
+        
+        //スコア判定
+        if(isGameOver(r)){
+            GameEnd(r, uuid, score);
+        }
     }
 
     public static void onPlayerDisconnect(HashMap<String, Object> map){
@@ -209,7 +224,7 @@ public class Server {
         }
     }
 
-    public boolean isGameOver(Room r){
+    public static boolean isGameOver(Room r){
         for(Player p : r.getAllPlayers()){
             if (r.getTargetScore() <= p.getScore()){
                 return true;
@@ -220,7 +235,14 @@ public class Server {
         return false;
     }
 
-    public static void GameEnd(Room r, String winner, int hiscore){
+    public static void GameEnd(Room r){
+        int maxScore = 0;
+        for(Player p : r.getAllPlayers()){
+            if(maxScore > p.getScore()){
+                
+            }
+        }
+
         HashMap<String, Object> map = new HashMap<>(){{
             put("type", "gameEnd");
             put("winnerUUID", winner);

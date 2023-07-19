@@ -76,6 +76,10 @@ __Server/通信__
 ```json
 {
     "type": "breakData",
+    "uuid": String,
+    "roomName": String,
+    "stageLevel": int,
+    "score": int,
     "x": int,
     "y": int
 }

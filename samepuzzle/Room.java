@@ -93,5 +93,12 @@ public class Room {
         return targetScore;
     }
 
+    public void makeRanking(){
+        int[]
+        for(Player p: getAllPlayers()){
+            
+        }
+    }
+
 
 }

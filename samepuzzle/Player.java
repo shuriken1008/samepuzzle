@@ -14,6 +14,7 @@ public class Player {
     private boolean isPlaying = false;
     private boolean isReady = false;
     
+    private Stage myStage;
 
 
     public Player(String displayName){
