@@ -13,14 +13,16 @@ public class Rooms {
 
 
     //passwd無し
-    public boolean createRoom(String name){
-        Room r = new Room(name, "");
-        if(roomMap.get(name) == null){
-            roomMap.put(name, r);
-            return true;     
+    public Room createRoom(String name){
+        
+        Room r = roomMap.get(name);
+        if(r == null){
+            r = new Room(name, "");
+            
         }else{
-            return false;
+            roomMap.put(name, r);
         }
+        return r;
     }
 
     //passwdあり

@@ -29,7 +29,7 @@ java --enable-preview TCPClient
 
 public class Server {
     public static int portNumber = 1234;
-    private Rooms rooms = new Rooms();
+    private static Rooms rooms = new Rooms();
 
     //<threadid, thread>
     private static HashMap<Long, Server1ClientThread> serverThreadMap = new HashMap<>();
@@ -110,6 +110,19 @@ public class Server {
     }
 
     public static void onPlayerConnect(HashMap<String, Object> map){
+        String roomName = (String)map.get("roomName");
+        String displayName = (String)map.get("displayName");
+        String uuid = (String)map.get("uuid");
+        //部屋を検索
+        Room r = rooms.createRoom(roomName);
+        Player p = new Player(displayName);
+        p.setUUID(uuid);
+
+
+        r.addPlayer(null);
+
+        
+
 
     }
 
@@ -118,6 +131,10 @@ public class Server {
     }
 
     public static void onStatus(HashMap<String, Object> map){
+        Boolean isReady = (Boolean)map.get("isReady");
+        String uuid = (String)map.get("uuid");
+        String roomName = (String)map.get("roomName");
+
 
     }
 

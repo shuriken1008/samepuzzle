@@ -26,6 +26,9 @@ public class Player {
     public String getUUID(){   
         return uuid;
     }
+    public void setUUID(String uuid){
+        this.uuid = uuid;
+    }
 
     public String getDisplayName(){
         return displayName;
