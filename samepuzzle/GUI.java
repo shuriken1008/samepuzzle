@@ -353,7 +353,7 @@ public class GUI extends JFrame {
     }
 
     public void showReStartMessage() {
-        JOptionPane.showMessageDialog(this, "All blocks are surrounded!");
+        JOptionPane.showMessageDialog(this, "No more removable blocks. ReStart.");
     }
 
     public static void main(String[] args) {
