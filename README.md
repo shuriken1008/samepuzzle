@@ -56,9 +56,10 @@ __Server/通信__
     "uuid": String,
     "isOwner": Boolean,
     "isPlaying": Boolean,
-    "isWaiting": Boolean,
+    "isReady": Boolean,
     "score": int,
     "rank": int
+
 }
 ```
 
@@ -66,6 +67,7 @@ __Server/通信__
 ```json
 {
     "type": "blockData",
+    "stageLevel" : int,
     "data": String //2次配列をそのまま文字列変換
 }
 ```

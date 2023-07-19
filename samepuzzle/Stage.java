@@ -1,7 +1,10 @@
 package samepuzzle;
 
+import java.util.HashMap;
 import java.util.Random;
 import java.util.Scanner;
+
+import javax.swing.SwingUtilities;
 
 
 
@@ -13,10 +16,19 @@ public class Stage {
     public static int BLUE = 0x0064d9;
 
 
-    private int data[][];
+    private static int data[][];
     private int stageCount = 0;
+    private int stageLevel = 0;
+    private int stageSize;
+
 
     public Stage(int size){
+        this.stageSize = size;
+        data = new int[size][size];
+    }
+    public Stage(int size, int stageLevel){
+        this.stageSize = size;
+        this.stageLevel = stageLevel;
         data = new int[size][size];
     }
 
@@ -57,6 +69,7 @@ public class Stage {
 
         }
         updatedata();
+        System.out.println(dataToString());
         return totalBlocks;
     }
     private int breakBlock(int x, int y, int beforeX, int beforeY, int blockId){
@@ -211,10 +224,34 @@ public static int[] moveZerosToStart(int[] array) {
         }
     }
 
+    public static String dataToString(){
+        String str = "";
+        for(int[] x: data){
+            for(int i: x){
+                str+=i;
+            }
+        }
+
+        return str;
+    }
+
+    public String toJson(int stageLevel){
+        return Json.toJson(new HashMap<>(){{
+            put("type", "blockData");
+            put("stageLevel", stageLevel);
+            put("stageSize", stageSize);
+            put("data", dataToString());
+        }});
+    }
 
     //DEBUG
     public static void main(String[] args){
-        GUI game = new GUI();
+        SwingUtilities.invokeLater(() -> {
+            GUI game = new GUI();
+            game.setVisible(true);
+        });
+
+        
         
         
     }

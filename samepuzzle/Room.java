@@ -1,20 +1,26 @@
 package samepuzzle;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class Room {
     private String name;
     private String passwd;
     private String uuid;
+    private int targetScore;
     private int stageSize;
-    private Stage stage;
+    private ArrayList<Stage> stageList = new ArrayList<>();
 
     private Player[] ranking = new Player[6];
 
-    private boolean is_start = false;
+    //<uuid, Player>
+    private HashMap<String, Player> players = new HashMap<>();
+
+    private boolean hasGameStarted = false;
+    private boolean hasGameEnded = false;
+
 
 
     //<UUID, Playerクラス>
@@ -26,13 +32,35 @@ public class Room {
         uuid = UUID.randomUUID().toString();
     }
     
-    public void startGame(){
-        stage = new Stage(stageSize);
+    public Stage genarateStages(){
+        Stage s = new Stage(stageSize);
+        stageList.add(s);
+
+        return s;
+    }
+    public Stage getStage(int index){
+        Stage s = stageList.get(index);
+        if(s == null){
+            s = genarateStages();
+        }
+
+        return s;
     }
 
+    public Player getPlayer(String uuid){
+        return players.get(uuid);
+    }
+    public Collection<Player> getAllPlayers(){
+        return players.values();
+    }
 
     public void addPlayer(Player p){
         playerList.add(p);
+        players.put(p.getUUID(), p);
+    }
+
+    public void removePlayer(Player p){
+        playerList.remove(p);
     }
 
     public String getUUID(){
@@ -45,6 +73,13 @@ public class Room {
 
     public String getPasswd(){
         return passwd;
+    }
+
+    public void setTargetScore(int score){
+        targetScore = score;
+    }
+    public int getTargetScore(){
+        return targetScore;
     }
 
 

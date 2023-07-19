@@ -5,6 +5,8 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,7 +36,7 @@ public class Server {
     //<threadid, thread>
     private static HashMap<Long, Server1ClientThread> serverThreadMap = new HashMap<>();
 
-    private static HashMap<String, String> uuidToThreadIdMap = new HashMap<>();
+    private static HashMap<String, Long> uuidToThreadIdMap = new HashMap<>();
     
     private static ArrayList<Server1ClientThread> serverThreadArrayList = new ArrayList<>();
 
@@ -56,11 +58,13 @@ public class Server {
                         },
                         // 1つのクライアントとの接続が切れた
                         (disconnected) -> {
-                            try {
-                                sendMessageToAllClient(disconnected + "さんが退出しました", serverThreadArrayList);
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
+                                //sendMessageToAllClient(disconnected + "さんが退出しました", serverThreadArrayList);
+                                try {
+                                    onDisconnect(disconnected);
+                                } catch (IOException e) {
+                                    // TODO Auto-generated catch block
+                                    e.printStackTrace();
+                                }
                         });
 
                 serverThreadMap.put(lastServerThread.getId(), lastServerThread);
@@ -106,6 +110,14 @@ public class Server {
     }
 
     public static void onPlayerData(HashMap<String, Object> map){
+        Boolean isReady = (Boolean)map.get("isReady");
+        String uuid = (String)map.get("uuid");
+        String roomName = (String)map.get("roomName");
+
+        Room r = rooms.getRoom(roomName);
+        
+        Player p = r.getPlayer(uuid);
+        p.setReady(isReady);
 
     }
 
@@ -114,7 +126,7 @@ public class Server {
         String displayName = (String)map.get("displayName");
         String uuid = (String)map.get("uuid");
         //部屋を検索
-        Room r = rooms.createRoom(roomName);
+        Room r = rooms.getRoom(roomName);
         Player p = new Player(displayName);
         p.setUUID(uuid);
 
@@ -127,17 +139,85 @@ public class Server {
     }
 
     public static void onPlayerDisconnect(HashMap<String, Object> map){
+        String uuid = (String)map.get("uuid");
+        Room r = rooms.getRoomFromPlayer(uuid);
+        Player p = r.getPlayer(uuid);
+        r.removePlayer(p);
 
+        String json = Json.toJson(new HashMap<String, Object>(){{
+            put("type", "disconnect");
+            put("uuid", uuid);
+        }});
+        
+        try {
+            sendDataToRoomMember(json, r);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public static void onDisconnect (Long threadId)throws IOException{
+        String uuid = threadIdToUUID(threadId, uuidToThreadIdMap);
+
+        Room r = rooms.getRoomFromPlayer(uuid);
+        Player p = r.getPlayer(uuid);
+        r.removePlayer(p);
+
+        String json = Json.toJson(new HashMap<String, Object>(){{
+            put("type", "disconnect");
+            put("uuid", uuid);
+        }});
+        
+        sendDataToRoomMember(json, r);
+        
+
+    }
+
+    
+    public static String threadIdToUUID(Long value, HashMap<String, Long> map) { 
+        /** * valueからkeyを取得（逆引き） * * @param value 値 (String) * @return キー (String) */
+        for (String key : map.keySet()) { 
+            if (map.get(key).equals(value)) { 
+                return key;
+            }
+        } 
+        return null;
     }
 
     public static void onStatus(HashMap<String, Object> map){
-        Boolean isReady = (Boolean)map.get("isReady");
-        String uuid = (String)map.get("uuid");
-        String roomName = (String)map.get("roomName");
-
 
     }
 
+    public static void gameStart(Room r){
+        for(Player p : r.getAllPlayers()){
+            if(!p.getIsReady()){
+                return;
+            }
+        }
+        LocalDateTime nowDate = LocalDateTime.now();
+        Long startAt = nowDate.plusMinutes(10).toEpochSecond(ZoneOffset.ofHours(9));
+        //開始命令送信
+        HashMap<String, Object> map = new HashMap<>(){{
+            put("type", "gameStart");
+            put("startAt", startAt);
+            put("targetScore", r.getTargetScore());
+        }};
+
+        try{
+            sendDataToRoomMember(Json.toJson(map), r);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isGameOver(Room r){
+        
+    }
+
+    public static void GameEnd(){
+
+    }
 
 
     /**
@@ -148,6 +228,24 @@ public class Server {
         for (final Server1ClientThread serverThread : serverThreadArrayList) {
             if (!serverThread.isDisconnected) {
                 serverThread.sendDataToClient(message);
+            }
+        }
+    }
+
+    static public void sendDataToRoomMember(String json, Room r)throws IOException{
+        for(Player p: r.getAllPlayers()){
+            String uuid = p.getUUID();
+            Long threadId = uuidToThreadIdMap.get(uuid);
+            if(threadId == null){
+                continue;
+            }
+            Server1ClientThread thread = serverThreadMap.get(threadId);
+            if (thread == null){
+                continue;
+            }
+
+            if(!thread.isDisconnected){
+                thread.sendDataToClient(json);
             }
         }
     }

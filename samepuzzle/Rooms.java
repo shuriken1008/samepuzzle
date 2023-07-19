@@ -13,7 +13,7 @@ public class Rooms {
 
 
     //passwd無し
-    public Room createRoom(String name){
+    public Room getRoom(String name){
         
         Room r = roomMap.get(name);
         if(r == null){
@@ -23,6 +23,15 @@ public class Rooms {
             roomMap.put(name, r);
         }
         return r;
+    }
+
+    public Room getRoomFromPlayer(String uuid){
+        for(Room r: roomMap.values()){
+            if(r.getPlayer(uuid) != null){
+                return r;
+            }
+        }
+        return null;
     }
 
     //passwdあり
