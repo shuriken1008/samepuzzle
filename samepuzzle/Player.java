@@ -16,10 +16,14 @@ public class Player {
     
 
 
-    public Player(String name){
-        this.displayName = name;
+    public Player(String displayName){
+        this.displayName = displayName;
         uuid = UUID.randomUUID().toString();
     }
+
+    public Player(){
+    }
+
 
     public String getUUID(){   
         return uuid;
@@ -41,6 +45,25 @@ public class Player {
 
     public int getRank(){
         return rank;
+    }
+
+    public int getScore(){
+        return score;
+    }
+
+    public void setFromMap(HashMap<String, Object> map){
+
+        if(map == null){
+            return;
+        }
+
+        uuid = (String)map.get("uuid");
+        displayName = (String)map.get("displayName");
+        isOwner = (Boolean)map.get("isOwner");
+        isPlaying = (Boolean)map.get("isPlaying");
+        isReady = (Boolean)map.get("isReady");
+        score = (int)map.get("score");
+        rank = (int)map.get("rank");
     }
 
     public String toJson(){
