@@ -17,7 +17,6 @@ public class Stage {
 
 
     private static int data[][];
-    private int stageCount = 0;
     private int stageLevel = 0;
     private int stageSize;
 
@@ -30,6 +29,11 @@ public class Stage {
         this.stageSize = size;
         this.stageLevel = stageLevel;
         data = new int[size][size];
+    }
+    public Stage(int size, int stageLevel, int[][] stageData){
+        this.stageSize = size;
+        this.stageLevel = stageLevel;
+        data = stageData;
     }
 
 
@@ -235,7 +239,7 @@ public static int[] moveZerosToStart(int[] array) {
         return str;
     }
 
-    public String toJson(int stageLevel){
+    public String toJson(){
         return Json.toJson(new HashMap<>(){{
             put("type", "blockData");
             put("stageLevel", stageLevel);

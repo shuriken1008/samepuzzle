@@ -7,6 +7,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /*
 サーバーの起動
@@ -19,15 +21,17 @@ javac --enable-preview --source 20 TCPClient.java
 java --enable-preview TCPClient
  */
 public class Client {
-    private Player playerData; 
     final InetAddress localhost;
     final Socket socket;
     final ObjectInputStream serverToClientStream;
     final ObjectOutputStream clientToServerStream;
+
     private String roomName;
+    private Room myRoom ;
+    private Player myData; 
     
     public Client(String displayName) throws IOException {
-        playerData = new Player(displayName);
+        myData = new Player(displayName);
 
         localhost = InetAddress.getLocalHost();
         socket = new Socket(localhost, Server.portNumber);
@@ -67,6 +71,9 @@ public class Client {
                     case("gameEnd")->{
                         onGameEnd(map);
                     }
+                    case("disconnect")->{
+                        onDisconnectPlayer(map);
+                    }
                 }
 
             }
@@ -77,31 +84,82 @@ public class Client {
     }
 
     public void onPlayerData(HashMap<String, Object> map){
+        //読み込み
+        Player newP = new Player();
+        newP.setFromMap(map);
 
+        Player p = myRoom.getPlayer(newP.getUUID());
+
+        if(p == null){
+            //部屋にいなかったらプレイヤーデータ作成
+            myRoom.addPlayer(newP);
+        }else{
+            p.setFromMap(map);
+        }
+        
     }
 
     public void onChat(HashMap<String, Object> map){
-
+        String msg = (String)map.get("content");
+        String uuid = (String)map.get("uuid");
+        
     }
 
     public void onBlockData(HashMap<String, Object> map){
+        //データ読み込み
+        int stageLevel = (int)map.get("stageLevel");
+        int stageSize = (int)map.get("stageSize");
+        String _stageData = (String)map.get("data");
+        int[][] stageData = new int[stageSize][stageSize];
 
+        for(int x=0; x<stageSize; x++){
+            for(int y=0; y<stageSize; y++){
+                stageData[x][y] = _stageData.charAt(x*stageSize + y);
+            }
+        }
     }
 
     public void onGameStart(HashMap<String, Object> map){
+        int targetScore = (int)map.get("targetScore");
+        long epochSec = (long)map.get("startAt");
+        
+        Timer timer = new Timer(false);
+		TimerTask task = new TimerTask() {
+			@Override
+			public void run() {
+				//ゲームスタート
+
+				timer.cancel();
+			}
+		};
+
+        timer.schedule(task, epochSec);
+
+        //ターゲットスコア表示セット
 
     }
 
     public void onGameEnd(HashMap<String, Object> map){
+        //ゲーム中止
 
+        //リザルト表示
+
+        //
+    }
+
+    public void onDisconnectPlayer(HashMap<String, Object> map){
+        String uuid = (String)map.get("uuid");
+
+        Player p = myRoom.getPlayer(uuid);
+        myRoom.removePlayer(p);
     }
 
     public void connect(String roomName) throws IOException{
         this.roomName = roomName;
         String jStr = Json.toJson(new HashMap<String, Object>(){{
             put("type", "connect");
-            put("displayName", playerData.getDisplayName());
-            put("uuid", playerData.getUUID());
+            put("displayName", myData.getDisplayName());
+            put("uuid", myData.getUUID());
             put("roomName", roomName);
 
         }   
@@ -119,7 +177,7 @@ public class Client {
     public void disconnect() throws IOException{
         String jStr = Json.toJson(new HashMap<String, Object>(){{
             put("type", "disconnect");
-            put("uuid", playerData.getUUID());
+            put("uuid", myData.getUUID());
             
 
         }   
@@ -130,10 +188,11 @@ public class Client {
     }
 
 
-    public void changeStatus() throws IOException{
+
+    public void sendPlayerData() throws IOException{
         String jStr = Json.toJson(new HashMap<String, Object>(){{
-            put("type", "status");
-            put("uuid", playerData.getUUID());
+            put("type", "playerData");
+            put("uuid", myData.getUUID());
             
 
         }   
@@ -141,19 +200,12 @@ public class Client {
 
         clientToServerStream.writeUTF(jStr);
         clientToServerStream.flush();
-    }
 
-    public void waitStartGame(){
+    }  
+
+    public void sendBreakPos(int x, int y){
         
-
     }
-
-    public void startGameHost(){
-
-    }
-
-    
-
     
 
 
@@ -168,9 +220,12 @@ public class Client {
         System.out.print("部屋名 > ");
         String roomeName = consoleInputScanner.nextLine();
 
-        
+        String roomPass = "";
+
         Client client = new Client(name);
         client.connect(roomeName);
+
+        Room myRoom = new Room(roomeName, roomPass);
         
     }
 }

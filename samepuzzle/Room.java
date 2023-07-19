@@ -32,6 +32,8 @@ public class Room {
         uuid = UUID.randomUUID().toString();
     }
     
+
+    //server only
     public Stage genarateStages(){
         Stage s = new Stage(stageSize);
         stageList.add(s);
@@ -46,6 +48,15 @@ public class Room {
 
         return s;
     }
+    //
+
+    //client only
+    public void loadStage(int[][] stageData, int stageLevel){
+        Stage s = new Stage(stageSize, stageLevel, stageData);
+        stageList.add(stageLevel, s);
+    }
+    //
+
 
     public Player getPlayer(String uuid){
         return players.get(uuid);

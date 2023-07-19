@@ -89,6 +89,9 @@ public class Server {
                 case("playerData")->{
                     onPlayerData(map);
                 }
+                case("breakData")->{
+                    onBreakData(map);
+                }
                 case("chat")->{
                     sendMessageToAllClient(message, serverThreadArrayList);
                 }
@@ -98,9 +101,7 @@ public class Server {
                 case("disconnect")->{
                     onPlayerDisconnect(map);
                 }
-                case("status")->{
-                    onStatus(map);
-                }
+                
             }
 
 
@@ -132,10 +133,11 @@ public class Server {
 
 
         r.addPlayer(null);
+    }
 
-        
-
-
+    public static void onBreakData(HashMap<String, Object> map){
+        int x = (int)map.get("x");
+        int y = (int)map.get("y");
     }
 
     public static void onPlayerDisconnect(HashMap<String, Object> map){
@@ -185,10 +187,6 @@ public class Server {
         return null;
     }
 
-    public static void onStatus(HashMap<String, Object> map){
-
-    }
-
     public static void gameStart(Room r){
         for(Player p : r.getAllPlayers()){
             if(!p.getIsReady()){
@@ -212,13 +210,39 @@ public class Server {
     }
 
     public boolean isGameOver(Room r){
-        
+        for(Player p : r.getAllPlayers()){
+            if (r.getTargetScore() <= p.getScore()){
+                return true;
+            }else{
+                continue;
+            }
+        }
+        return false;
     }
 
-    public static void GameEnd(){
+    public static void GameEnd(Room r, String winner, int hiscore){
+        HashMap<String, Object> map = new HashMap<>(){{
+            put("type", "gameEnd");
+            put("winnerUUID", winner);
+            put("HiScore", hiscore);
+        }};
 
+        try{
+            sendDataToRoomMember(Json.toJson(map), r);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
+    public static void sendBlockData(Room r, int stageLevel){
+        Stage s = r.getStage(stageLevel);
+
+        try{
+            sendDataToRoomMember(s.toJson(), r);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
 
     /**
      * サーバーに接続しているすべてのクライアントにメッセージを送信する
