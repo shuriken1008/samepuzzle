@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -36,6 +37,13 @@ public class GUI extends JFrame {
 
     private Sound SESelect = new Sound("./SE/select.wav");
     private Sound SEBrake = new Sound("./SE/b2.wav");
+
+
+    private String displayName;
+    private String roomName;
+    private String roomPass;
+
+    private Client client;
 
     public GUI() {
         setTitle("セイムパズル");
@@ -288,6 +296,11 @@ public class GUI extends JFrame {
         private void createScoreLabel() {
             String playerName = JOptionPane.showInputDialog(this, "名前を入力してください。");
             String roomName = JOptionPane.showInputDialog(this, "部屋名を入力してください。");
+            
+            connectToServer(playerName, roomName);
+            
+
+
 
             JPanel scorePanel = new JPanel();
 
@@ -354,6 +367,19 @@ public class GUI extends JFrame {
 
     public void showReStartMessage() {
         JOptionPane.showMessageDialog(this, "All blocks are surrounded!");
+    }
+
+
+    public void connectToServer(String displayName, String roomName){
+        
+        try {
+            client = new Client(displayName);
+            client.connect(roomName);
+            
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {

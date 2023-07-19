@@ -96,7 +96,7 @@ public class Server {
                     sendMessageToAllClient(message, serverThreadArrayList);
                 }
                 case("connect")->{
-                    onPlayerConnect(map);
+                    onPlayerConnect(clientId, map);
                 }
                 case("disconnect")->{
                     onPlayerDisconnect(map);
@@ -125,17 +125,18 @@ public class Server {
 
     }
 
-    public static void onPlayerConnect(HashMap<String, Object> map){
+    public static void onPlayerConnect(long threadId, HashMap<String, Object> map){
         String roomName = (String)map.get("roomName");
         String displayName = (String)map.get("displayName");
         String uuid = (String)map.get("uuid");
+        uuidToThreadIdMap.put(uuid, threadId);
         //部屋を検索
         Room r = rooms.getRoom(roomName);
         Player p = new Player(displayName);
         p.setUUID(uuid);
 
 
-        r.addPlayer(null);
+        r.addPlayer(p);
     }
 
     public static void onBreakData(HashMap<String, Object> map){
@@ -151,7 +152,7 @@ public class Server {
         
         //スコア判定
         if(isGameOver(r)){
-            GameEnd(r, uuid, score);
+            GameEnd(r);
         }
     }
 
@@ -176,7 +177,9 @@ public class Server {
 
     public static void onDisconnect (Long threadId)throws IOException{
         String uuid = threadIdToUUID(threadId, uuidToThreadIdMap);
-
+        
+        // System.out.println("uuid:" + uuid);
+        
         Room r = rooms.getRoomFromPlayer(uuid);
         Player p = r.getPlayer(uuid);
         r.removePlayer(p);
@@ -239,9 +242,12 @@ public class Server {
         int maxScore = 0;
         for(Player p : r.getAllPlayers()){
             if(maxScore > p.getScore()){
-                
+
             }
         }
+
+        String winner = "";
+        int hiscore = 0;
 
         HashMap<String, Object> map = new HashMap<>(){{
             put("type", "gameEnd");
@@ -294,6 +300,7 @@ public class Server {
                 thread.sendDataToClient(json);
             }
         }
+        System.out.println("<" + r.getName() + ">: " + json);
     }
 }
 

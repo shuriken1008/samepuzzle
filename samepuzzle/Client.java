@@ -154,7 +154,9 @@ public class Client {
     }
 
     public void connect(String roomName) throws IOException{
-        this.roomName = roomName;
+
+        myRoom = new Room(roomName, "");
+
         String jStr = Json.toJson(new HashMap<String, Object>(){{
             put("type", "connect");
             put("displayName", myData.getDisplayName());
@@ -210,8 +212,6 @@ public class Client {
 
     public static void main(String[] args) throws IOException {
 
-        GUI gui = new GUI();
-
         Scanner consoleInputScanner = new Scanner(System.in);
         System.out.print("名前 > ");
         String name = consoleInputScanner.nextLine();
@@ -219,12 +219,10 @@ public class Client {
         System.out.print("部屋名 > ");
         String roomeName = consoleInputScanner.nextLine();
 
-        String roomPass = "";
-
         Client client = new Client(name);
         client.connect(roomeName);
 
-        Room myRoom = new Room(roomeName, roomPass);
+        
         
     }
 }

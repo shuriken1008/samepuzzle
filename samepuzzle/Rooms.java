@@ -1,6 +1,7 @@
 package samepuzzle;
 
 import java.util.Map;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class Rooms {
@@ -18,9 +19,8 @@ public class Rooms {
         Room r = roomMap.get(name);
         if(r == null){
             r = new Room(name, "");
-            
-        }else{
             roomMap.put(name, r);
+            
         }
         return r;
     }
@@ -32,6 +32,10 @@ public class Rooms {
             }
         }
         return null;
+    }
+
+    public Collection<Room> getAllRooms(){
+        return roomMap.values();
     }
 
     //passwdあり
