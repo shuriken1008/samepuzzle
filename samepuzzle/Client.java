@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -21,7 +22,8 @@ javac --enable-preview --source 20 TCPClient.java
 java --enable-preview TCPClient
  */
 public class Client {
-    final InetAddress localhost;
+    final int portNumber = 12344;
+    final InetSocketAddress addr = new InetSocketAddress("gesi.f5.si", portNumber);
     final Socket socket;
     final ObjectInputStream serverToClientStream;
     final ObjectOutputStream clientToServerStream;
@@ -32,8 +34,7 @@ public class Client {
     public Client(String displayName) throws IOException {
         myData = new Player(displayName);
 
-        localhost = InetAddress.getLocalHost();
-        socket = new Socket(localhost, Server.portNumber);
+        socket = new Socket(addr.getAddress(), addr.getPort());
         serverToClientStream = new ObjectInputStream(socket.getInputStream());
         clientToServerStream = new ObjectOutputStream(socket.getOutputStream());
         new Thread(
@@ -148,9 +149,11 @@ public class Client {
 
     public void onDisconnectPlayer(HashMap<String, Object> map){
         String uuid = (String)map.get("uuid");
-
         Player p = myRoom.getPlayer(uuid);
+
         myRoom.removePlayer(p);
+        String str = "<" + myRoom.getName() + "> " +p.getDisplayName() + " さんが退出しました。";
+        System.out.println(str);
     }
 
     public void connect(String roomName) throws IOException{

@@ -125,7 +125,7 @@ public class Server {
 
     }
 
-    public static void onPlayerConnect(long threadId, HashMap<String, Object> map){
+    public static void onPlayerConnect(long threadId, HashMap<String, Object> map) throws IOException{
         String roomName = (String)map.get("roomName");
         String displayName = (String)map.get("displayName");
         String uuid = (String)map.get("uuid");
@@ -137,6 +137,11 @@ public class Server {
 
 
         r.addPlayer(p);
+
+        //PLデータを全員に送信
+        for(Player _p: r.getAllPlayers()){
+            sendDataToRoomMember(_p.toJson(), r);
+        }
     }
 
     public static void onBreakData(HashMap<String, Object> map){
