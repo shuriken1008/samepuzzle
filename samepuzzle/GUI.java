@@ -54,6 +54,17 @@ public class GUI extends JFrame {
         });
     }
 
+    public static String dataToString(int[][] data){
+        String str = "";
+        for(int[] x: data){
+            for(int i: x){
+                str+=i;
+            }
+        }
+
+        return str;
+    }
+
     // Title
     class TitleScreenPanel extends JPanel {
         @Override
@@ -144,6 +155,14 @@ public class GUI extends JFrame {
             });
         }
 
+        public void receiveBlockData(int[][] data){
+            for(int row = 0; row < NUM_ROWS; row++){
+                System.arraycopy(data[row],0,board[row],0,NUM_COLS);
+            }
+            compressBoard();
+            ((JLabel) selectBlockPanel.getComponent(1)).setText("スコア: " + score);
+            repaint();
+        }
         public boolean[][] copyVisited(boolean[][] arr2D) {
             boolean[][] _arr = new boolean[NUM_ROWS][NUM_COLS];
             for (int x = 0; x < NUM_ROWS; x++) {
