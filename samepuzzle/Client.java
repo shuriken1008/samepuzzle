@@ -3,7 +3,6 @@ package samepuzzle;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.HashMap;
@@ -102,7 +101,12 @@ public class Client {
     public void onChat(HashMap<String, Object> map){
         String msg = (String)map.get("content");
         String uuid = (String)map.get("uuid");
+
+        Player p = myRoom.getPlayer(uuid);
+
+        String str = "<" + p.getDisplayName() + " さん> " + msg; 
         
+        System.out.println(str);
     }
 
     public void onBlockData(HashMap<String, Object> map){
@@ -192,6 +196,19 @@ public class Client {
     }
 
 
+    public void sendChat(String msg) throws IOException{
+        String jStr = Json.toJson(new HashMap<String, Object>(){{
+            put("type", "chat");
+            put("uuid", myData.getUUID());
+            put("content", msg);
+            
+
+        }   
+        });
+
+        clientToServerStream.writeUTF(jStr);
+        clientToServerStream.flush();
+    }
 
     public void sendPlayerData() throws IOException{
         String jStr = Json.toJson(new HashMap<String, Object>(){{
@@ -207,8 +224,18 @@ public class Client {
 
     }  
 
-    public void sendBreakPos(int x, int y){
-        
+    public void sendBreakPos(int x, int y) throws IOException{
+        String jStr = Json.toJson(new HashMap<String, Object>(){{
+            put("type", "playerData");
+            put("uuid", myData.getUUID());
+            
+
+        }   
+        });
+
+        clientToServerStream.writeUTF(jStr);
+        clientToServerStream.flush();
+
     }
     
 

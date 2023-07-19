@@ -60,11 +60,13 @@ public class Player {
 
         uuid = (String)map.get("uuid");
         displayName = (String)map.get("displayName");
-        isOwner = (Boolean)map.get("isOwner");
-        isPlaying = (Boolean)map.get("isPlaying");
-        isReady = (Boolean)map.get("isReady");
-        score = (int)map.get("score");
-        rank = (int)map.get("rank");
+        isOwner =  (String)map.get("isOwner") == "true"?true :false;
+        isPlaying = (String)map.get("isPlaying") == "true" ? true: false;
+        isReady = (String)map.get("isReady") == "true" ? true: false;
+        score = Integer.parseInt((String)map.get("score"));
+        rank = Integer.parseInt((String)map.get("rank"));
+
+        //System.out.println(toJson());
     }
 
     public String toJson(){

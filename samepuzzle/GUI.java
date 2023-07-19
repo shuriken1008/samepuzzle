@@ -21,6 +21,9 @@ public class GUI extends JFrame {
     private static final int BOARD_X = 10;
     private static final int BOARD_Y = 35;
 
+    private static final int WINDOW_X = 800;
+    private static final int WINDOW_Y = 600;    
+
     private static final int OFFSET = 2;
 
     private int[][] board;
@@ -48,11 +51,15 @@ public class GUI extends JFrame {
     public GUI() {
         setTitle("セイムパズル");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(BOARD_X + NUM_COLS * BLOCK_SIZE + 100, BOARD_Y + NUM_ROWS * BLOCK_SIZE + 100);
+        //setSize(BOARD_X + NUM_COLS * BLOCK_SIZE + 100, BOARD_Y + NUM_ROWS * BLOCK_SIZE + 100);
+        setSize(WINDOW_X, WINDOW_Y);
         setResizable(false);
         setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
 
-        setContentPane(new TitleScreenPanel());
+        add(new ChatPanel());
+        add(new TitleScreenPanel());
+        
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -97,6 +104,12 @@ public class GUI extends JFrame {
             y += fm.getHeight() + 20;
 
             g.drawString("Click to start", x, y);
+
+            //ボタン配置
+
+            //テキストボックスPlayer
+
+            //text- RoomName
         }
     }
 
@@ -366,6 +379,38 @@ public class GUI extends JFrame {
                     return Color.WHITE;
             }
         }
+    }
+
+
+    //チャット欄(重ねて表示)
+    class ChatPanel extends JPanel{
+        public ChatPanel(){
+            setBounds((int)(WINDOW_X*0.6), (int)(WINDOW_Y*0.8), 300, 100);
+
+            setBackground(new Color(.5f, .8f, .5f, .5f));
+            add(new JButton(">>>"));
+        }
+    }
+
+    //スコア・ランキング・選択中のブロックなど
+    class StatusPanel extends JPanel{
+
+    }
+
+    //メニュー画面(おまけ)
+    class MenuPanel extends JPanel{
+
+    }
+
+
+    //背景画像表示
+    class BackImgPanel extends JPanel{
+        
+    }
+
+    //ゲーム画面の外枠(おまけ)
+    class GamePanelFrame extends JPanel{
+
     }
 
     public void showReStartMessage() {
