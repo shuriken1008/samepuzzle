@@ -267,7 +267,7 @@ public class GUI extends JFrame {
         }
 
         private void createScoreLabel() {
-            String playerName = JOptionPane.showInputDialog(this, "Enter your name:");
+            String playerName = JOptionPane.showInputDialog(this, "名前を入力してください。");
             String roomName = JOptionPane.showInputDialog(this, "部屋名を入力してください。");
 
             JPanel scorePanel = new JPanel();
