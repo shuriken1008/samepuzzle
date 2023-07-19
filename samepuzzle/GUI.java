@@ -111,6 +111,7 @@ public class GUI extends JFrame {
                     if (row >= 0 && row < NUM_ROWS && col >= 0 && col < NUM_COLS && board[row][col] != 0) {
                         HashSet<Point> connectedBlocks = findConnectedBlocks(row, col);
                         ((JLabel) selectBlockPanel.getComponent(0)).setText("ブロック: " + connectedBlocks.size());
+                        //((JLabel) selectBlockPanel.getComponent(1)).setText("スコア: " + score);
 
                         boolean f = connectedBlocks.equals(lastConnectedBlocks);
 
@@ -120,7 +121,7 @@ public class GUI extends JFrame {
                                 removeBlocks(connectedBlocks);
                                 compressBoard();
 
-                                ((JLabel) selectBlockPanel.getComponent(1)).setText("スコア: " + score);
+
                                 repaint();
                             } else if (checkAdjacentBlocks(row, col)) {
                                 boolean allBlocksAreAdjacent = true;
@@ -315,6 +316,8 @@ public class GUI extends JFrame {
 
         @Override
         public void paint(Graphics g) {
+            //((JLabel) selectBlockPanel.getComponent(0)).setText("ブロック: " + connectedBlocks.size());
+            ((JLabel) selectBlockPanel.getComponent(1)).setText("スコア: " + score);
             g.setColor(Color.WHITE);
             g.fillRect(0, 0, BOARD_X + NUM_COLS * BLOCK_SIZE + 100, BOARD_Y + NUM_ROWS * BLOCK_SIZE + 100);
 
