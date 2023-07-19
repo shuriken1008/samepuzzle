@@ -30,7 +30,7 @@ java --enable-preview TCPClient
  */
 
 public class Server {
-    public static int portNumber = 1234;
+    public static int portNumber = 12344;
     private static Rooms rooms = new Rooms();
 
     //<threadid, thread>
