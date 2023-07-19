@@ -26,7 +26,6 @@ public class Client {
     final ObjectInputStream serverToClientStream;
     final ObjectOutputStream clientToServerStream;
 
-    private String roomName;
     private Room myRoom ;
     private Player myData; 
     
