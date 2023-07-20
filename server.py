@@ -30,7 +30,7 @@ async def listner(cmd):
             except Exception as e:
                 print(str(e))
                 pass
-            
+            print(buf)
             webhook.upload_to_discord(f"```json{buf}```")
         except IOError as e:
             # 読むべき内容がない場合はIOError(11,
