@@ -296,6 +296,8 @@ public class Server {
         for(Player p : r.getAllPlayers()){
             //フラグ変更
             p.setIsGameEnded(true);
+            p.setIsPlaying(false);
+            p.setIsReady(false);
             int score = p.getScore();
             if(maxScore < score){
                 maxScore = score;
