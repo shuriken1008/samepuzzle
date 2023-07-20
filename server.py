@@ -18,7 +18,7 @@ def execute_bash_command(command):
         if output:
             out = str(output.strip())
             print(out)
-            webhook.upload_to_discord(out)
+            webhook.upload_to_discord(f"```json\n{out}```")
     return process.poll()
 
 if __name__ == "__main__":
