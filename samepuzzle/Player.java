@@ -45,6 +45,9 @@ public class Player {
         return displayName;
     }
 
+    public void setRoomName(String roomName){
+        this.roomName = roomName;
+    }
     public String getRoomName(){
         return roomName;
     }
