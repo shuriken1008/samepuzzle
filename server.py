@@ -25,7 +25,8 @@ def execute_bash_command(command):
         if output:
             out = str(output.strip())
             print(out)
-            q.put(f"```json\n{out}```")
+            out = f"```json\n{out}```"
+            webhook.upload_to_discord(out)
             
     return process.poll()
 
@@ -48,10 +49,7 @@ if __name__ == "__main__":
     command_to_execute = "java samepuzzle/Server" 
     
     t1 = threading.Thread(target=execute_bash_command, args=(command_to_execute,))
-    t2 = threading.Thread(target=send_loop)
-
     t1.start()
-    t2.start()
 
-    t1.join()
-    t2.join()
+    #t2 = threading.Thread(target=send_loop)
+    #t2.start()
