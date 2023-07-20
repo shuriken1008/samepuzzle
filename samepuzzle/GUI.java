@@ -119,6 +119,15 @@ public class GUI extends JFrame {
             exroomTextField = new JTextField();
             exroomTextField.setPreferredSize(new Dimension(200, 40)); // Set the desired size here
 
+            JButton rankingButton = new JButton("ランキング");
+            rankingButton.setPreferredSize(new Dimension(200, 60));
+            rankingButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    showRanking();
+                }
+            });
+
             JButton startButton = new JButton("ゲームを開始");
             startButton.setPreferredSize(new Dimension(200, 60));
             startButton.addActionListener(new ActionListener() {
@@ -168,6 +177,18 @@ public class GUI extends JFrame {
             gbc.gridwidth = 2;
             gbc.fill = GridBagConstraints.HORIZONTAL;
             add(startButton, gbc);
+
+            gbc.gridx = 0;
+            gbc.gridy = 4;
+            gbc.gridwidth = 2;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            add(rankingButton, gbc);
+        }
+
+        private void showRanking() {
+            setContentPane(new RankingPanel(client));
+            repaint();
+            revalidate();
         }
 
         private void startGame() {
@@ -730,9 +751,33 @@ public class GUI extends JFrame {
     }
 
     //スコア・ランキング・選択中のブロックなど
-    class StatusPanel extends JPanel {
+    class RankingPanel extends JPanel {
+        private Client client;
 
+        public RankingPanel(Client client) {
+            this.client = client;
+            setLayout(new BorderLayout());
+
+            // TODO
+
+            JButton backToTitleButton = new JButton("タイトル画面に戻る");
+            backToTitleButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    backToTitleScreen();
+                }
+            });
+
+            add(backToTitleButton, BorderLayout.SOUTH);
+        }
+
+        private void backToTitleScreen() {
+            setContentPane(new TitleScreenPanel());
+            repaint();
+            revalidate();
+        }
     }
+
 
     //メニュー画面(おまけ)
     class MenuPanel extends JPanel {
