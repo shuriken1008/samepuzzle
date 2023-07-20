@@ -112,14 +112,12 @@ public class Server {
 
     //準備OK/NGを受け取る
     public static void onPlayerData(HashMap<String, Object> map){
-        Boolean isReady = (String)map.get("isReady") == "true" ? true: false;
-        String uuid = (String)map.get("uuid");
-        String roomName = (String)map.get("roomName");
+        Player newP = new Player();
 
-        Room r = rooms.getRoom(roomName);
+        Room r = rooms.getRoom(newP.getRoomName());
         
-        Player p = r.getPlayer(uuid);
-        p.setReady(isReady);
+        Player p = r.getPlayer(newP.getUUID());
+        p.setReady(newP.getIsReady());
 
         gameStart(r);
 

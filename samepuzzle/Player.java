@@ -6,6 +6,7 @@ import java.util.UUID;
 public class Player {
     private String displayName;
     private String uuid;
+    private String roomName;
     private int rank = 0;
     private int score = 0;
     private int stageLevel = 0;
@@ -44,6 +45,10 @@ public class Player {
         return displayName;
     }
 
+    public String getRoomName(){
+        return roomName;
+    }
+
     public int getRank(){
         return rank;
     }
@@ -60,6 +65,7 @@ public class Player {
 
         uuid = (String)map.get("uuid");
         displayName = (String)map.get("displayName");
+        roomName = (String)map.get("roomName");
         isOwner =  (String)map.get("isOwner") == "true"?true :false;
         isPlaying = (String)map.get("isPlaying") == "true" ? true: false;
         isReady = (String)map.get("isReady") == "true" ? true: false;
@@ -74,6 +80,7 @@ public class Player {
             put("type", "playerData");
             put("uuid", uuid);
             put("displayName", displayName);
+            put("roomName", roomName);
             put("isOwner", isOwner);
             put("isPlaying", isPlaying);
             put("isReady", isReady);
