@@ -107,10 +107,13 @@ public class GUI extends JFrame {
             titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
             JLabel playerLabel = new JLabel("プレイヤー名：");
+            playerLabel.setFont(new Font("メイリオ", Font.PLAIN, 24));
             playerTextField = new JTextField();
 
             JLabel roomLabel = new JLabel("部屋名：");
+            roomLabel.setFont(new Font("メイリオ", Font.PLAIN, 24));
             exroomTextField = new JTextField();
+            exroomTextField.setColumns(20); // Set the width to 20 columns
 
             JButton startButton = new JButton("ゲームを開始");
             startButton.setPreferredSize(new Dimension(200, 60));
