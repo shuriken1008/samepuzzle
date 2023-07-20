@@ -9,7 +9,7 @@ public class Player {
     private String roomName;
     private int rank = 0;
     private int score = 0;
-    private int targetScore;
+    private int targetScore = 10000;
     private int stageLevel = 0;
 
     private boolean isOwner = false;

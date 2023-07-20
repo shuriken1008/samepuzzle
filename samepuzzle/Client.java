@@ -103,7 +103,8 @@ public class Client {
         }
 
         //自分だったらmyData更新
-        if(newP.getUUID() == myData.getUUID()){
+        //ただしゲーム中は更新しない バグ防止
+        if(newP.getUUID() == myData.getUUID() && !myData.isPlaying()){
             myData = newP;
         }
         

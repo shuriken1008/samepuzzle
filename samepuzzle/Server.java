@@ -165,6 +165,16 @@ public class Server {
         if(isGameOver(r)){
             GameEnd(r);
         }
+
+        for(Player _p : r.getAllPlayers()){
+            try {
+                sendDataToRoomMember(_p.toJson(), r);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
     }
 
     public static void onPlayerDisconnect(HashMap<String, Object> map){
@@ -276,7 +286,7 @@ public class Server {
         HashMap<String, Object> map = new HashMap<>(){{
             put("type", "gameEnd");
             put("winnerUUID", winnerUUID);
-            put("HiScore", hiscore);
+            put("hiScore", hiscore);
         }};
 
         try{

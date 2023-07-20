@@ -10,9 +10,11 @@ public class Room {
     private String name;
     private String passwd;
     private String uuid;
+    private String ownerUUID;
     private int targetScore;
     private int stageSize;
     private int lastGameHiscore = 0;
+    private int maxPerson = 6;
     private ArrayList<Stage> stageList = new ArrayList<>();
 
     private Player[] ranking = new Player[6];
@@ -123,5 +125,28 @@ public class Room {
 
     }
 
+    public void setFromMap(HashMap<String, Object> map){
+
+        if(map == null){return;}
+
+        uuid = (String)map.get("uuid");
+        name = (String)map.get("roomName");
+        ownerUUID = (String)map.get("ownerUUID");
+        targetScore = Integer.parseInt((String)map.get("targetScore"));
+    }
+
+
+    public String toJson(){
+        HashMap<String, Object> map = new HashMap<>(){{
+            put("type", "roomData");
+
+            put("uuid", uuid);
+            put("roomName", name);
+            put("ownerUUID", ownerUUID);
+            put("targetScore", targetScore);
+        }};
+
+        return Json.toJson(map);
+    }
 
 }
