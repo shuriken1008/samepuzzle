@@ -62,6 +62,18 @@ __Server/通信__
 
 }
 ```
+-部屋データ
+```json
+{
+    "type": "roomData",
+    "roomName": String,
+    "uuid": String,
+    "ownerUUID": String,
+    "targetScore": int,
+    "maxUsers": int
+}
+```
+
 
 - ブロックデータ
 ```json
