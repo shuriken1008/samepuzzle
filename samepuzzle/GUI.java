@@ -98,39 +98,61 @@ public class GUI extends JFrame {
         private JTextField exroomTextField;
 
         public TitleScreenPanel() {
-            setLayout(new BorderLayout());
+            setLayout(new GridBagLayout()); // Use GridBagLayout for more control over component sizes and positions
 
-            JPanel inputPanel = new JPanel(new GridLayout(3, 2));
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(5, 5, 5, 5);
 
             JLabel titleLabel = new JLabel("SameGame");
             titleLabel.setFont(new Font("Arial", Font.BOLD, 36));
             titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
             JLabel playerLabel = new JLabel("プレイヤー名：");
-            playerLabel.setFont(new Font("メイリオ", Font.PLAIN, 24));
+            playerLabel.setFont(new Font("メイリオ", Font.PLAIN, 24)); // Update font size here
             playerTextField = new JTextField();
+            playerTextField.setPreferredSize(new Dimension(200, 40)); // Set the desired size here
 
             JLabel roomLabel = new JLabel("部屋名：");
-            roomLabel.setFont(new Font("メイリオ", Font.PLAIN, 24));
+            roomLabel.setFont(new Font("メイリオ", Font.PLAIN, 24)); // Update font size here
             exroomTextField = new JTextField();
-            exroomTextField.setColumns(20); // Set the width to 20 columns
+            exroomTextField.setPreferredSize(new Dimension(200, 40)); // Set the desired size here
 
             JButton startButton = new JButton("ゲームを開始");
             startButton.setPreferredSize(new Dimension(200, 60));
             startButton.addActionListener(e -> startGame());
 
-            inputPanel.add(titleLabel);
-            inputPanel.add(new JLabel());
-            inputPanel.add(playerLabel);
-            inputPanel.add(playerTextField);
-            inputPanel.add(roomLabel);
-            inputPanel.add(exroomTextField);
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.gridwidth = 2;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            add(titleLabel, gbc);
 
-            JPanel buttonPanel = new JPanel();
-            buttonPanel.add(startButton);
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            gbc.gridwidth = 1;
+            gbc.fill = GridBagConstraints.NONE;
+            add(playerLabel, gbc);
 
-            add(inputPanel, BorderLayout.CENTER);
-            add(buttonPanel, BorderLayout.SOUTH);
+            gbc.gridx = 1;
+            gbc.gridy = 1;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            add(playerTextField, gbc);
+
+            gbc.gridx = 0;
+            gbc.gridy = 2;
+            gbc.fill = GridBagConstraints.NONE;
+            add(roomLabel, gbc);
+
+            gbc.gridx = 1;
+            gbc.gridy = 2;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            add(exroomTextField, gbc);
+
+            gbc.gridx = 0;
+            gbc.gridy = 3;
+            gbc.gridwidth = 2;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            add(startButton, gbc);
         }
 
         private void startGame() {
