@@ -112,6 +112,7 @@ public class Player {
         isOwner = Integer.parseInt((String)map.get("isOwner")) == 1 ? true:false;
         isReady = Integer.parseInt((String)map.get("isReady")) == 1 ? true:false;
         isPlaying = Integer.parseInt((String)map.get("isPlaying")) == 1 ? true:false;
+        isGameEnded = Integer.parseInt((String)map.get("isGameEnded")) == 1 ? true:false;
         score = Integer.parseInt((String)map.get("score"));
         rank = Integer.parseInt((String)map.get("rank"));
     }
@@ -124,6 +125,7 @@ public class Player {
             put("roomName", roomName);
             put("isOwner", isOwner ? 1:0);
             put("isPlaying", isPlaying ? 1:0);
+            put("isGameEnded", isGameEnded ? 1:0);
             put("isReady", isReady ? 1:0);
             put("score", score);
             put("rank", rank);
