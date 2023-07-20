@@ -248,12 +248,13 @@ public class Client {
 
         Client client = new Client(name);
         client.connect(roomeName);
+        myData.setRoomName(roomeName);
 
         //準備完了を送信
         myData.setReady(true);
         sendMyData();
 
-        
+
         
         
     }
