@@ -37,6 +37,8 @@ async def execute_bash_command(command):
 async def send_loop():
     while True:
         try:
+            if q.empty:
+                continue
             webhook.upload_to_discord(q.get())
             await asyncio.sleep(0.8)
             pass
