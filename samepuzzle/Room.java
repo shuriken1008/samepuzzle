@@ -11,7 +11,7 @@ public class Room {
     private String passwd;
     private String uuid;
     private String ownerUUID;
-    private int targetScore = 1000;
+    private int targetScore = 10000;
     private int stageSize;
     private int lastGameHiscore = 0;
     private String lastGameWinnerUUID = "";
