@@ -1,18 +1,22 @@
 package samepuzzle;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
 import java.util.Random;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.HashSet;
+import java.util.Random;
+
+
 
 public class GUI extends JFrame {
     private static final int NUM_ROWS = 20;
@@ -69,11 +73,11 @@ public class GUI extends JFrame {
         });
     }
 
-    public static String dataToString(int[][] data){
+    public static String dataToString(int[][] data) {
         String str = "";
-        for(int[] x: data){
-            for(int i: x){
-                str+=i;
+        for (int[] x : data) {
+            for (int i : x) {
+                str += i;
             }
         }
 
@@ -135,10 +139,10 @@ public class GUI extends JFrame {
     }
 
 
-    //waiting panel　未実装
     class WaitingPanel extends JPanel {
         private String playerName;
         private String exroomName;
+        private volatile boolean gameStarted = false;
 
         public WaitingPanel(String playerName, String exroomName) {
             this.playerName = playerName;
@@ -158,14 +162,35 @@ public class GUI extends JFrame {
             contentPanel.add(roomLabel);
 
             add(contentPanel, BorderLayout.CENTER);
+
+            //WaitingPanel -> GamePanelに画面遷移
+//            new Tread(() -> {
+//                while (!gameStarted) {
+//                    try {
+//                        gameStarted = client.checkGameFlag();
+//                        Thread.sleep(1000); //1secoundごとにチェック
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                SwingUtilities.invokeLater(() -> {
+//                    setContentPane(new GamePanel());
+//                    revalidate();
+//                });
+//            }).start();
         }
     }
 
 
-
     // Game Panel
     class GamePanel extends JPanel {
+        private boolean gameFinish = false;
+
+
         public GamePanel() {
+            BackImgPanel backImgPanel = new BackImgPanel();
+            add(backImgPanel);
+
             initializeBoard();
             createScoreLabel();
             createSelBlockPanel();
@@ -227,6 +252,14 @@ public class GUI extends JFrame {
             });
         }
 
+        private void showResultPanel() {
+            ResultPanel resultPanel = new ResultPanel(score);
+            remove(boardPanel);
+            add(resultPanel, BorderLayout.CENTER);
+            revalidate();
+        }
+
+
         //result
         class ResultPanel extends JPanel {
             private int finalScore;
@@ -262,22 +295,16 @@ public class GUI extends JFrame {
             }
         }
 
-        private void showResultPanel() {
-            ResultPanel resultPanel = new ResultPanel(score);
-            remove(boardPanel);
-            add(resultPanel, BorderLayout.CENTER);
-            revalidate();
-        }
 
-
-        public void receiveBlockData(int[][] data){
-            for(int row = 0; row < NUM_ROWS; row++){
-                System.arraycopy(data[row],0,board[row],0,NUM_COLS);
+        public void receiveBlockData(int[][] data) {
+            for (int row = 0; row < NUM_ROWS; row++) {
+                System.arraycopy(data[row], 0, board[row], 0, NUM_COLS);
             }
             compressBoard();
             ((JLabel) selectBlockPanel.getComponent(1)).setText("スコア: " + score);
             repaint();
         }
+
         public boolean[][] copyVisited(boolean[][] arr2D) {
             boolean[][] _arr = new boolean[NUM_ROWS][NUM_COLS];
             for (int x = 0; x < NUM_ROWS; x++) {
@@ -435,6 +462,12 @@ public class GUI extends JFrame {
             g.setColor(Color.WHITE);
             g.fillRect(0, 0, BOARD_X + NUM_COLS * BLOCK_SIZE + 100, BOARD_Y + NUM_ROWS * BLOCK_SIZE + 100);
 
+            //gameFinishになったらresult表示
+            if(gameFinish){
+                showResultPanel();
+                return;
+            }
+
             for (int row = 0; row < NUM_ROWS; row++) {
                 for (int col = 0; col < NUM_COLS; col++) {
                     int blockColor = board[row][col];
@@ -471,9 +504,9 @@ public class GUI extends JFrame {
 
 
     //チャット欄(重ねて表示)
-    class ChatPanel extends JPanel{
-        public ChatPanel(){
-            setBounds((int)(WINDOW_X*0.6), (int)(WINDOW_Y*0.8), 300, 100);
+    class ChatPanel extends JPanel {
+        public ChatPanel() {
+            setBounds((int) (WINDOW_X * 0.6), (int) (WINDOW_Y * 0.8), 300, 100);
 
             setBackground(new Color(.5f, .8f, .5f, .5f));
             add(new JButton(">>>"));
@@ -481,23 +514,40 @@ public class GUI extends JFrame {
     }
 
     //スコア・ランキング・選択中のブロックなど
-    class StatusPanel extends JPanel{
+    class StatusPanel extends JPanel {
 
     }
 
     //メニュー画面(おまけ)
-    class MenuPanel extends JPanel{
+    class MenuPanel extends JPanel {
 
     }
 
 
     //背景画像表示
-    class BackImgPanel extends JPanel{
+    //コードは書いたがどこにも実装はしていない
+    //image.pngはファイル名/URLに変更
+    class BackImgPanel extends JPanel {
+        private Image backgroundImage;
 
+        public void BackImPanel() {
+            try {
+                backgroundImage = ImageIO.read(new File("image.png"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if (backgroundImage != null) {
+                g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+            }
+        }
     }
 
     //ゲーム画面の外枠(おまけ)
-    class GamePanelFrame extends JPanel{
+    class GamePanelFrame extends JPanel {
 
     }
 
@@ -506,7 +556,7 @@ public class GUI extends JFrame {
     }
 
 
-    public void connectToServer(String displayName, String roomName){
+    public void connectToServer(String displayName, String roomName) {
 
         try {
             client = new Client(displayName);
