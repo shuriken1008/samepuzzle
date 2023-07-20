@@ -212,13 +212,19 @@ public class GUI extends JFrame {
 
 
             readyButton.addActionListener(new ActionListener(){
-                private boolean isReady = false;
+                private boolean isReady = client.myData.isReady();
                 public void actionPerformed(ActionEvent e) {
                     readyButton.setText(isReady? "取り消す": "準備完了！");
-                    JOptionPane.showMessageDialog(null, "マッチング中");
+                    //JOptionPane.showMessageDialog(null, "マッチング中");
                     try {
-                        client.myData.setIsReady(true);
-                        client.sendMyData();
+                        
+                        if(client.myData.isGameEnded()){
+                            client.myData.setIsReady(!isReady);
+                            client.sendMyData();
+                            readyButton.setText(!isReady? "取り消す": "準備完了！");    
+                            readyButton.setEnabled(false);
+                        }
+                        
                     } catch (IOException e1) {
                         // TODO Auto-generated catch block
                         e1.printStackTrace();
@@ -261,6 +267,8 @@ public class GUI extends JFrame {
                     Date d = new Date(epoch*1000);
                     timer.schedule(task,d);
                     System.out.println("game start at " + d.toString());
+                    //まもなく開始します
+                    waitingLabel.setText("まもなく開始します…");
                 });
             }).start();
         }

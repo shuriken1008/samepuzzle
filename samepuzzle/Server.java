@@ -121,7 +121,10 @@ public class Server {
         //System.out.println("newP" + newP.getIsReady());
         p.setIsReady(newP.isReady());
 
-        gameStart(r);
+        if(checkGameStart(r)){
+            gameStart(r);
+        }
+        
 
     }
 
@@ -226,9 +229,9 @@ public class Server {
         return null;
     }
 
-    public boolean checkGameStart(Room r){
+    public static boolean checkGameStart(Room r){
         for(Player p : r.getAllPlayers()){
-            System.out.println(p.getDisplayName() + "," + p.isReady());
+            System.out.println("<" + r.getName() + ">" + p.getDisplayName() + "," + p.isReady());
             if(!p.isReady()){
                 return false;
             }
