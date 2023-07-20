@@ -16,7 +16,7 @@ async def listner(cmd):
         shell=True,
         stdout=subprocess.PIPE, 
         stderr=subprocess.STDOUT, 
-        text=True
+        bufsize=0
     )
     while process.poll() is None:
         try:
