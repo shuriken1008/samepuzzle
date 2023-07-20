@@ -254,7 +254,7 @@ public class GUI extends JFrame {
                             if (!gameEnd) {
                                 setContentPane(new GamePanel());
                             } else {
-                                setContentPane(new showResultPanel() );
+                                //setContentPane(new ResultPanel() );
                             }
                             revalidate();
                             timer.cancel();
