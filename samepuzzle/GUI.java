@@ -28,14 +28,13 @@ import java.util.Random;
 
 
 public class GUI extends JFrame {
+    private static final int WINDOW_X = 800;
+    private static final int WINDOW_Y = 600;
     private static final int NUM_ROWS = 20;
     private static final int NUM_COLS = 20;
     private static final int BLOCK_SIZE = 20;
     private static final int BOARD_X = 10;
-    private static final int BOARD_Y = 35;
-
-    private static final int WINDOW_X = 800;
-    private static final int WINDOW_Y = 600;
+    private static final int BOARD_Y = 70;
 
     private static final int OFFSET = 2;
 
@@ -137,15 +136,13 @@ public class GUI extends JFrame {
             if (!playerName.isEmpty() && !exroomName.isEmpty()) {
                 displayName = playerName;
                 roomName = exroomName;
-                connectToServer(displayName, roomName);
-                //setContentPane(new GamePanel());
+
+                setContentPane(new GamePanel());
                 setContentPane(new WaitingPanel(playerName, exroomName));
                 revalidate();
             } else {
                 JOptionPane.showMessageDialog(this, "プレイヤー名と部屋名を入力してください。");
             }
-
-            
         }
     }
 
@@ -233,9 +230,6 @@ public class GUI extends JFrame {
 
 
         public GamePanel() {
-            BackImgPanel backImgPanel = new BackImgPanel();
-            add(backImgPanel);
-
             initializeBoard();
             createScoreLabel();
             createSelBlockPanel();
@@ -293,7 +287,6 @@ public class GUI extends JFrame {
                                     showReStartMessage();
                                     initializeBoard();
                                     repaint();
-                                    
                                 }
                             }
                         } else {
@@ -483,7 +476,7 @@ public class GUI extends JFrame {
         }
 
         private void createScoreLabel() {
-            // 
+            connectToServer(displayName, roomName);
 
             JPanel scorePanel = new JPanel();
 
@@ -507,6 +500,9 @@ public class GUI extends JFrame {
             selectBlockPanel.add(new JLabel("スコア： 0"));
             selectBlockPanel.setBounds(BOARD_X, 0, NUM_COLS * BLOCK_SIZE, BOARD_Y - 10);
 
+            ((JLabel) selectBlockPanel.getComponent(0)).setFont(new Font("メイリオ", Font.PLAIN, 24));
+            ((JLabel) selectBlockPanel.getComponent(1)).setFont(new Font("メイリオ", Font.PLAIN, 24));
+
             add(selectBlockPanel);
         }
 
@@ -515,7 +511,7 @@ public class GUI extends JFrame {
             //((JLabel) selectBlockPanel.getComponent(0)).setText("ブロック: " + connectedBlocks.size());
             ((JLabel) selectBlockPanel.getComponent(1)).setText("スコア: " + score);
             g.setColor(Color.WHITE);
-            g.fillRect(0, 0, BOARD_X + NUM_COLS * BLOCK_SIZE + 100, BOARD_Y + NUM_ROWS * BLOCK_SIZE + 100);
+            g.fillRect(0, 0, WINDOW_X, WINDOW_Y);
 
             //gameFinishになったらresult表示
             if(gameFinish){
@@ -582,6 +578,9 @@ public class GUI extends JFrame {
     //背景画像表示
     //コードは書いたがどこにも実装はしていない
     //image.pngはファイル名/URLに変更
+    //memo↓
+    //BackImgPanel backImgPanel = new BackImgPanel();
+    //            add(backImgPanel);
     class BackImgPanel extends JPanel {
         private Image backgroundImage;
 
