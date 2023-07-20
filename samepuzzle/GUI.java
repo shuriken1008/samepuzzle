@@ -82,58 +82,60 @@ public class GUI extends JFrame {
 
     // Title
     class TitleScreenPanel extends JPanel {
-        private JTextField playerTextField;
-        private JTextField roomTextField;
+            private JTextField playerTextField;
+            private JTextField roomTextField;
 
-        public TitleScreenPanel() {
-            setLayout(new BorderLayout());
+            public TitleScreenPanel() {
+                setLayout(new BorderLayout());
 
-            JPanel inputPanel = new JPanel(new GridLayout(3, 2));
+                JPanel inputPanel = new JPanel(new GridLayout(3, 2));
 
-            JLabel titleLabel = new JLabel("SameGame");
-            titleLabel.setFont(new Font("Arial", Font.BOLD, 36));
-            titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                JLabel titleLabel = new JLabel("SameGame");
+                titleLabel.setFont(new Font("Arial", Font.BOLD, 36));
+                titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-            JLabel playerLabel = new JLabel("プレイヤー名：");
-            playerTextField = new JTextField();
+                JLabel playerLabel = new JLabel("プレイヤー名：");
+                playerTextField = new JTextField();
 
-            JLabel roomLabel = new JLabel("部屋名：");
-            roomTextField = new JTextField();
+                JLabel roomLabel = new JLabel("部屋名：");
+                roomTextField = new JTextField();
 
-            JButton startButton = new JButton("ゲームを開始");
-            startButton.addActionListener(e -> startGame());
+                JButton startButton = new JButton("ゲームを開始");
+                startButton.addActionListener(e -> startGame());
 
-            inputPanel.add(titleLabel);
-            inputPanel.add(new JLabel());
-            inputPanel.add(playerLabel);
-            inputPanel.add(playerTextField);
-            inputPanel.add(roomLabel);
-            inputPanel.add(roomTextField);
+                inputPanel.add(titleLabel);
+                inputPanel.add(new JLabel());
+                inputPanel.add(playerLabel);
+                inputPanel.add(playerTextField);
+                inputPanel.add(roomLabel);
+                inputPanel.add(roomTextField);
 
-            JPanel buttonPanel = new JPanel();
-            buttonPanel.add(startButton);
+                JPanel buttonPanel = new JPanel();
+                buttonPanel.add(startButton);
 
-            add(inputPanel, BorderLayout.CENTER);
-            add(buttonPanel, BorderLayout.SOUTH);
-        }
+                add(inputPanel, BorderLayout.CENTER);
+                add(buttonPanel, BorderLayout.SOUTH);
+            }
 
-        private void startGame() {
-            String playerName = playerTextField.getText();
-            String roomName = roomTextField.getText();
+            private void startGame() {
+                String playerName = playerTextField.getText();
+                String roomName = roomTextField.getText();
 
-            if (!playerName.isEmpty() && !roomName.isEmpty()) {
-                displayName = playerName;
-                roomName = roomName;
+                if (!playerName.isEmpty() && !roomName.isEmpty()) {
+                    displayName = playerName;
+                    roomName = roomName;
 
-                setContentPane(new GamePanel());
-                revalidate();
-            } else {
-                JOptionPane.showMessageDialog(this, "プレイヤー名と部屋名を入力してください。");
+                    //waiting panelを表示するようにしているがうまくいかない
+                    setContentPane(new WaitingPanel(playerName, roomName));
+                    revalidate();
+                } else {
+                    JOptionPane.showMessageDialog(this, "プレイヤー名と部屋名を入力してください。");
+                }
             }
         }
-    }
 
-    //waiting panel　未実装
+
+        //waiting panel　未実装
     class WaitingPanel extends JPanel {
         private String playerName;
         private String roomName;
