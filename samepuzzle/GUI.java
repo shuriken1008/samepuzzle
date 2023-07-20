@@ -69,14 +69,19 @@ public class GUI extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        add(new ChatPanel());
+        //add(new ChatPanel());
         add(new TitleScreenPanel());
 
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 //setContentPane(new GamePanel());
-                revalidate();
+                new Thread(
+                () -> {
+                    
+                    revalidate();
+                })
+                .start();
             }
         });
     }
@@ -119,7 +124,16 @@ public class GUI extends JFrame {
 
             JButton startButton = new JButton("ゲームを開始");
             startButton.setPreferredSize(new Dimension(200, 60));
-            startButton.addActionListener(e -> startGame());
+            startButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // 画面を切り替える
+                    new Thread(()->{
+                        startGame();
+
+                    }).start();
+                }
+            });
 
             gbc.gridx = 0;
             gbc.gridy = 0;
@@ -162,10 +176,23 @@ public class GUI extends JFrame {
             if (!playerName.isEmpty() && !exroomName.isEmpty()) {
                 displayName = playerName;
                 roomName = exroomName;
+                
+                connectToServer(playerName, exroomName);
 
-                setContentPane(new GamePanel());
-                setContentPane(new WaitingPanel(playerName, exroomName));
-                revalidate();
+                Timer timer = new Timer(false);
+                TimerTask task = new TimerTask() {
+                    @Override
+                    public void run() {
+                        //部屋に移動
+                        setContentPane(new WaitingPanel(playerName, exroomName));
+                        revalidate();
+                        repaint();
+                        timer.cancel();
+
+                    }
+                };
+                timer.schedule(task,10);
+                
             } else {
                 JOptionPane.showMessageDialog(this, "プレイヤー名と部屋名を入力してください。");
             }
@@ -218,10 +245,12 @@ public class GUI extends JFrame {
                     //JOptionPane.showMessageDialog(null, "マッチング中");
                     try {
                         
+                        client.myData.setIsReady(!isReady);
+                        client.sendMyData();
+                        readyButton.setText(!isReady? "取り消す": "準備完了！");    
                         if(client.myData.isGameEnded()){
-                            client.myData.setIsReady(!isReady);
-                            client.sendMyData();
-                            readyButton.setText(!isReady? "取り消す": "準備完了！");    
+                        }else{
+                            
                             readyButton.setEnabled(false);
                         }
                         
@@ -291,13 +320,17 @@ public class GUI extends JFrame {
                 public void mousePressed(MouseEvent e) {
                     int row = (e.getY() - BOARD_Y) / (BLOCK_SIZE + OFFSET);
                     int col = (e.getX() - BOARD_X) / (BLOCK_SIZE + OFFSET);
-
+                    //GameOverチェック
+                    if(!client.checkGameFlag()){
+                        System.out.println("gameover");
+                        showResultPanel();
+                    }
                     boolean[][] _visited = copyVisited(visited);
-
                     if (row >= 0 && row < NUM_ROWS && col >= 0 && col < NUM_COLS && board[row][col] != 0) {
                         HashSet<Point> connectedBlocks = findConnectedBlocks(row, col);
-                        ((JLabel) selectBlockPanel.getComponent(0)).setText("ブロック: " + connectedBlocks.size());
-                        //((JLabel) selectBlockPanel.getComponent(1)).setText("スコア: " + score);
+                        ((JLabel) selectBlockPanel.getComponent(0)).setText("ブロック: " + connectedBlocks.size() + "　　　　" + "スコア" + client.myData.getScore() + "　　　　" + client.myData.getRank() + "位");
+                        //((JLabel) selectBlockPanel.getComponent(1)).setText("スコア: " + client.myData.getScore());
+
 
                         boolean f = connectedBlocks.equals(lastConnectedBlocks);
 
@@ -353,8 +386,15 @@ public class GUI extends JFrame {
         private void showResultPanel() {
             gameFinish = true;
             remove(boardPanel);
-            add(new ResultPanel(score), BorderLayout.CENTER);
-            revalidate();
+            //add(new ResultPanel(score), BorderLayout.CENTER);
+            new Thread(
+                () -> {
+                    
+                    setContentPane(new ResultPanel(score));
+                    revalidate();
+                })
+                .start();
+
         }
 
         //result
@@ -362,11 +402,23 @@ public class GUI extends JFrame {
             private int finalScore;
 
             public ResultPanel(int score) {
+                //自分のスコア
+                //順位
+                int rank = client.myData.getRank();
+                rank = rank == 0 ? rank: 1;
+                //ハイスコア
+                int hiScore = client.myRoom.getHiscore();
+                //ハイスコアプレイヤー
+                String hiScorePlayer = client.myRoom.getWinner();
+                Player _p = client.myRoom.getPlayer(hiScorePlayer);
+                if(_p == null){ _p = client.myRoom.getPlayer(client.myData.getUUID());}
+                String winnerName = _p.getDisplayName();
+
                 this.finalScore = score;
 
                 setLayout(new BorderLayout());
 
-                JLabel resultLabel = new JLabel("Finish!");
+                JLabel resultLabel = new JLabel("GameOver!");
                 resultLabel.setFont(new Font("Arial", Font.BOLD, 36));
                 resultLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -374,21 +426,39 @@ public class GUI extends JFrame {
                 scoreLabel.setFont(new Font("Arial", Font.PLAIN, 24));
                 scoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
+                JLabel rankLabel = new JLabel("Rank : " + rank + "位");
+                rankLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                rankLabel.setFont(new Font("メイリオ", Font.PLAIN, 24));
+                
+                JLabel winnerLabel = new JLabel("Winner : " + winnerName + "  (" + hiScore + "点)");
+                winnerLabel.setFont(new Font("メイリオ", Font.PLAIN, 24));
+                winnerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+               
+                
                 JButton restartButton = new JButton("Restart Game");
                 restartButton.addActionListener(e -> restartGame());
+    
+
 
                 JPanel contentPanel = new JPanel(new GridLayout(3, 1));
                 contentPanel.add(resultLabel);
                 contentPanel.add(scoreLabel);
+                contentPanel.add(rankLabel);
+                contentPanel.add(winnerLabel);
                 contentPanel.add(restartButton);
 
                 add(contentPanel, BorderLayout.CENTER);
             }
 
             private void restartGame() {
+                new Thread(
+                    () -> {
+                        setContentPane(new TitleScreenPanel());
+                        
+                        revalidate();
+                    })
+                .start();
                 initializeBoard();
-                setContentPane(new TitleScreenPanel());
-                revalidate();
             }
         }
 
@@ -550,8 +620,6 @@ public class GUI extends JFrame {
         }
 
         private void createScoreLabel() {
-            connectToServer(displayName, roomName);
-
             JPanel scorePanel = new JPanel();
 
             JLabel nameLabel = new JLabel("Player: " + displayName);

@@ -30,7 +30,7 @@ public class Client {
     final ObjectInputStream serverToClientStream;
     static ObjectOutputStream clientToServerStream;
 
-    private Room myRoom ;
+    static Room myRoom ;
     static Player myData; 
 
 
@@ -153,6 +153,8 @@ public class Client {
         int hiscore = Integer.parseInt((String)map.get("hiScore"));
 
         myData.setIsGameEnded(true);
+        myRoom.setHiscore(hiscore);
+        myRoom.setWinner(winnerUUID);
         //ゲーム中止 -> guiで処理
 
         //リザルト表示　->同じ

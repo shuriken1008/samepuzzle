@@ -11,9 +11,10 @@ public class Room {
     private String passwd;
     private String uuid;
     private String ownerUUID;
-    private int targetScore;
+    private int targetScore = 1000;
     private int stageSize;
     private int lastGameHiscore = 0;
+    private String lastGameWinnerUUID = "";
     private int maxPerson = 6;
     private ArrayList<Stage> stageList = new ArrayList<>();
 
@@ -102,6 +103,12 @@ public class Room {
     }
     public int getHiscore(){
         return lastGameHiscore;
+    }
+    public void setWinner(String uuid){
+        lastGameWinnerUUID = uuid;
+    }
+    public String getWinner(){
+        return lastGameWinnerUUID;
     }
 
     public void makeRanking(){

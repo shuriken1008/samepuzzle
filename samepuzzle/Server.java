@@ -89,6 +89,9 @@ public class Server {
                 case("playerData")->{
                     onPlayerData(map);
                 }
+                case("roomData") ->{
+                    onRoomData(map);
+                }
                 case("breakData")->{
                     onBreakData(map);
                 }
@@ -126,6 +129,14 @@ public class Server {
         }
         
 
+    }
+
+    public static void onRoomData(HashMap<String, Object> map){
+        Room newR = new Room(null, null);
+        newR.setFromMap(map);
+
+        Room r = rooms.getRoom(newR.getName());
+        r.setFromMap(map);
     }
 
     public static void onPlayerConnect(long threadId, HashMap<String, Object> map) throws IOException{
@@ -253,6 +264,12 @@ public class Server {
             put("targetScore", r.getTargetScore());
         }};
 
+        //status変更
+        for(Player _p : r.getAllPlayers()){
+            _p.setIsPlaying(true);
+            _p.setIsGameEnded(false);
+        }
+
         try{
             sendDataToRoomMember(Json.toJson(map), r);
         }catch(IOException e){
@@ -276,6 +293,8 @@ public class Server {
         int maxScore = 0;
         String winner = "";
         for(Player p : r.getAllPlayers()){
+            //フラグ変更
+            p.setIsGameEnded(true);
             int score = p.getScore();
             if(maxScore < score){
                 maxScore = score;
