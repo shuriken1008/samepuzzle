@@ -3,6 +3,7 @@ package samepuzzle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -122,12 +123,12 @@ public class Room {
         }
 
         Arrays.sort(scores);
-        int j = 0;
+        int j = scores.length;
         for(int s : scores){
             Player _p = scoreMap.get(s);
-            _p.setRank(j+1);
+            _p.setRank(j);
 
-            j++;
+            j--;
         }
 
     }
