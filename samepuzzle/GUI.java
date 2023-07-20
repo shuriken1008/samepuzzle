@@ -411,6 +411,25 @@ public class GUI extends JFrame {
             }
             return _arr;
         }
+        public int[][] copyBoard(int[][] arr2D) {
+            int[][] _arr = new int[NUM_ROWS][NUM_COLS];
+            for (int x = 0; x < NUM_ROWS; x++) {
+                for (int y = 0; y < NUM_COLS; y++) {
+                    _arr[x][y] = arr2D[x][y];
+                }
+            }
+            return _arr;
+        }
+        public boolean compareBoard(int[][] a, int[][] b){
+            for (int x = 0; x < NUM_ROWS; x++) {
+                for (int y = 0; y < NUM_COLS; y++) {
+                    if(a[x][y] != b[x][y]){
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
 
         private void initializeBoard() {
             Random random = new Random();
@@ -482,6 +501,7 @@ public class GUI extends JFrame {
         }
 
         private void compressBoard() {
+            int[][] _before = copyBoard(board);
             for (int col = 0; col < NUM_COLS; col++) {
                 int emptyRow = NUM_ROWS - 1;
 
@@ -522,6 +542,10 @@ public class GUI extends JFrame {
                         board[row][col] = 0;
                     }
                 }
+            }
+
+            if(!compareBoard(_before, board)){
+                compressBoard();
             }
         }
 
