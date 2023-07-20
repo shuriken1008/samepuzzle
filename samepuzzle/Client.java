@@ -148,11 +148,17 @@ public class Client {
     }
 
     public void onGameEnd(HashMap<String, Object> map){
-        //ゲーム中止
+        String winnerUUID = (String)map.get("winnerUUID");
+        int hiscore = Integer.parseInt((String)map.get("hiScore"));
 
-        //リザルト表示
+        myData.setIsGameEnded(true);
+        //ゲーム中止 -> guiで処理
+
+        //リザルト表示　->同じ
 
         //
+
+        //リザルト表示してからisPlaying = false;
     }
 
     public void onDisconnectPlayer(HashMap<String, Object> map){
@@ -263,7 +269,7 @@ public class Client {
     }
 
     public boolean checkGameFlag() {
-        if(myData.getIsPlaying() && !myData.getIsGameEnded()){
+        if(myData.isPlaying() && !myData.isGameEnded()){
             return true;
         }
         return false;

@@ -1,6 +1,7 @@
 package samepuzzle;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
@@ -11,6 +12,7 @@ public class Room {
     private String uuid;
     private int targetScore;
     private int stageSize;
+    private int lastGameHiscore = 0;
     private ArrayList<Stage> stageList = new ArrayList<>();
 
     private Player[] ranking = new Player[6];
@@ -93,12 +95,32 @@ public class Room {
     public int getTargetScore(){
         return targetScore;
     }
+    public void setHiscore(int score){
+        lastGameHiscore = score;
+    }
+    public int getHiscore(){
+        return lastGameHiscore;
+    }
 
     public void makeRanking(){
-        
+        int[] scores = new int[getAllPlayers().size()];
+        HashMap<Integer, Player> scoreMap = new HashMap<>();
+        int i = 0;
         for(Player p: getAllPlayers()){
-            
+            scores[i] = p.getScore();
+            scoreMap.put(p.getScore(), p);
+            i++;
         }
+
+        Arrays.sort(scores);
+        int j = 0;
+        for(int s : scores){
+            Player _p = scoreMap.get(s);
+            _p.setRank(j+1);
+
+            j++;
+        }
+
     }
 
 

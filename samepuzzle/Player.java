@@ -37,13 +37,13 @@ public class Player {
         this.uuid = uuid;
     }
 
-    public Boolean getIsReady(){
+    public Boolean isReady(){
         return isReady;
     }
     public void setIsReady(boolean f){
         isReady = f;
     }
-    public boolean getIsPlaying(){
+    public boolean isPlaying(){
         return isPlaying;
     }
     public void setIsPlaying(Boolean f){
@@ -52,7 +52,7 @@ public class Player {
     public void setIsGameEnded(boolean f){
         isGameEnded = f;
     }
-    public boolean getIsGameEnded(){
+    public boolean isGameEnded(){
         return isGameEnded;
     }
 
@@ -76,6 +76,9 @@ public class Player {
 
     public int getRank(){
         return rank;
+    }
+    public void setRank(int n){
+        rank = n;
     }
 
     public void resetScore(){

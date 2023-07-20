@@ -119,7 +119,7 @@ public class Server {
         
         Player p = r.getPlayer(newP.getUUID());
         //System.out.println("newP" + newP.getIsReady());
-        p.setIsReady(newP.getIsReady());
+        p.setIsReady(newP.isReady());
 
         gameStart(r);
 
@@ -218,8 +218,8 @@ public class Server {
 
     public boolean checkGameStart(Room r){
         for(Player p : r.getAllPlayers()){
-            System.out.println(p.getDisplayName() + "," + p.getIsReady());
-            if(!p.getIsReady()){
+            System.out.println(p.getDisplayName() + "," + p.isReady());
+            if(!p.isReady()){
                 return false;
             }
         }
@@ -260,18 +260,22 @@ public class Server {
 
     public static void GameEnd(Room r){
         int maxScore = 0;
+        String winner = "";
         for(Player p : r.getAllPlayers()){
-            if(maxScore > p.getScore()){
-
+            int score = p.getScore();
+            if(maxScore < score){
+                maxScore = score;
+                winner = p.getUUID();
             }
         }
 
-        String winner = "";
-        int hiscore = 0;
+        final int hiscore = maxScore;
+        final String winnerUUID = winner;
+        
 
         HashMap<String, Object> map = new HashMap<>(){{
             put("type", "gameEnd");
-            put("winnerUUID", winner);
+            put("winnerUUID", winnerUUID);
             put("HiScore", hiscore);
         }};
 
