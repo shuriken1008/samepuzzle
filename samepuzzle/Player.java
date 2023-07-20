@@ -69,13 +69,11 @@ public class Player {
         uuid = (String)map.get("uuid");
         displayName = (String)map.get("displayName");
         roomName = (String)map.get("roomName");
-        isOwner =  (String)map.get("isOwner") == "true"?true :false;
-        isPlaying = (String)map.get("isPlaying") == "true" ? true: false;
-        isReady = (String)map.get("isReady") == "true" ? true: false;
+        isOwner = Integer.parseInt((String)map.get("isOwner")) == 1 ? true:false;
+        isReady = Integer.parseInt((String)map.get("isReady")) == 1 ? true:false;
+        isPlaying = Integer.parseInt((String)map.get("isPlaying")) == 1 ? true:false;
         score = Integer.parseInt((String)map.get("score"));
         rank = Integer.parseInt((String)map.get("rank"));
-
-        //System.out.println(toJson());
     }
 
     public String toJson(){
@@ -84,9 +82,9 @@ public class Player {
             put("uuid", uuid);
             put("displayName", displayName);
             put("roomName", roomName);
-            put("isOwner", isOwner);
-            put("isPlaying", isPlaying);
-            put("isReady", isReady);
+            put("isOwner", isOwner ? 1:0);
+            put("isPlaying", isPlaying ? 1:0);
+            put("isReady", isReady ? 1:0);
             put("score", score);
             put("rank", rank);
         }};

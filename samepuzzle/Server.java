@@ -113,10 +113,12 @@ public class Server {
     //準備OK/NGを受け取る
     public static void onPlayerData(HashMap<String, Object> map){
         Player newP = new Player();
-
+        newP.setFromMap(map);
         Room r = rooms.getRoom(newP.getRoomName());
+        //System.out.println(r.getName());
         
         Player p = r.getPlayer(newP.getUUID());
+        //System.out.println("newP" + newP.getIsReady());
         p.setReady(newP.getIsReady());
 
         gameStart(r);
@@ -132,6 +134,7 @@ public class Server {
         Room r = rooms.getRoom(roomName);
         Player p = new Player(displayName);
         p.setUUID(uuid);
+        p.setRoomName(roomName);
 
 
         r.addPlayer(p);
@@ -209,7 +212,9 @@ public class Server {
     }
 
     public static void gameStart(Room r){
+        //System.out.println(r.getAllPlayers());
         for(Player p : r.getAllPlayers()){
+            System.out.println(p.getDisplayName() + "," + p.getIsReady());
             if(!p.getIsReady()){
                 return;
             }

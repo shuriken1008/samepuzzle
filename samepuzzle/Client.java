@@ -22,7 +22,10 @@ java --enable-preview TCPClient
  */
 public class Client {
     final int portNumber = 12344;
-    final InetSocketAddress addr = new InetSocketAddress("gesi.f5.si", portNumber);
+    
+    String hostName = "localhost";
+    // hostName = "gesi.f5.si";
+    final InetSocketAddress addr = new InetSocketAddress(hostName, portNumber);
     final Socket socket;
     final ObjectInputStream serverToClientStream;
     static ObjectOutputStream clientToServerStream;
@@ -129,8 +132,8 @@ public class Client {
     }
 
     public void onGameStart(HashMap<String, Object> map){
-        int targetScore = (int)map.get("targetScore");
-        long epochSec = (long)map.get("startAt");
+        int targetScore = Integer.valueOf((String)map.get("targetScore"));
+        long epochSec = Long.valueOf((String)map.get("startAt"));
         
         Timer timer = new Timer(false);
 		TimerTask task = new TimerTask() {
@@ -165,15 +168,15 @@ public class Client {
         System.out.println(str);
     }
 
-    public void connect(String roomName) throws IOException{
+    public void connect() throws IOException{
 
-        myRoom = new Room(roomName, "");
+        myRoom = new Room(myData.getRoomName(), "");
 
         String jStr = Json.toJson(new HashMap<String, Object>(){{
             put("type", "connect");
             put("displayName", myData.getDisplayName());
             put("uuid", myData.getUUID());
-            put("roomName", roomName);
+            put("roomName", myData.getRoomName());
 
         }   
         });
@@ -247,8 +250,9 @@ public class Client {
         String roomeName = consoleInputScanner.nextLine();
 
         Client client = new Client(name);
-        client.connect(roomeName);
         myData.setRoomName(roomeName);
+        client.connect();
+        
 
         //準備完了を送信
         myData.setReady(true);

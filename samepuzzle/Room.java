@@ -71,6 +71,7 @@ public class Room {
     }
 
     public void removePlayer(Player p){
+        players.remove(p.getUUID());
         playerList.remove(p);
     }
 
