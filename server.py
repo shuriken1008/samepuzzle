@@ -1,5 +1,7 @@
 import asyncio
 import errno
+import fcntl
+import os
 import subprocess
 import sys
 import discord_webhook
@@ -18,6 +20,8 @@ async def listner(cmd):
         stderr=subprocess.STDOUT, 
         bufsize=0
     )
+    flag = fcntl.fcntl(process.stdout.fileno(), fcntl.F_GETFL)
+    fcntl.fcntl(process.stdout.fileno(), fcntl.F_SETFL, flag | os.O_NONBLOCK)
     while process.poll() is None:
         try:
             await asyncio.sleep(0.8)
