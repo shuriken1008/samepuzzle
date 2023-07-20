@@ -280,6 +280,7 @@ public class Server {
 
     public static boolean isGameOver(Room r){
         int targetScore = r.getTargetScore();
+        System.out.println("<"+r.getName() + ">" + r.getTargetScore());
         for(Player p : r.getAllPlayers()){
             if (targetScore <= p.getScore()){
                 return true;
