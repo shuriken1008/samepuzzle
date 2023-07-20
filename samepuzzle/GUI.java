@@ -52,6 +52,7 @@ public class GUI extends JFrame {
 
     private Sound SESelect = new Sound("./media/select.wav");
     private Sound SEBrake = new Sound("./media/b2.wav");
+    BGImageLayeredPane layerPane;
 
 
     private String displayName;
@@ -68,20 +69,16 @@ public class GUI extends JFrame {
         setResizable(false);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-
-        //add(new ChatPanel());
+        layerPane = new BGImageLayeredPane();
+        //
         add(new TitleScreenPanel());
 
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 //setContentPane(new GamePanel());
-                new Thread(
-                () -> {
                     
-                    revalidate();
-                })
-                .start();
+            revalidate();
             }
         });
     }
@@ -125,14 +122,18 @@ public class GUI extends JFrame {
             JButton startButton = new JButton("ゲームを開始");
             startButton.setPreferredSize(new Dimension(200, 60));
             startButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    // 画面を切り替える
-                    new Thread(()->{
-                        startGame();
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 画面を切り替える
+                
+                new Thread(()->{
+                    //add(new ChatPanel());
+                    startButton.setEnabled(false);    
+                    startGame();
+                    startButton.setEnabled(false);
 
-                    }).start();
-                }
+                }).start();
+            }
             });
 
             gbc.gridx = 0;
@@ -184,9 +185,13 @@ public class GUI extends JFrame {
                     @Override
                     public void run() {
                         //部屋に移動
+                        
+                        
+                        //c.add(new ChatPanel());
+                        
                         setContentPane(new WaitingPanel(playerName, exroomName));
-                        revalidate();
                         repaint();
+                        revalidate();
                         timer.cancel();
 
                     }
@@ -213,7 +218,7 @@ public class GUI extends JFrame {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 
-            JLabel waitingLabel = new JLabel("マッチング中...");
+            JLabel waitingLabel = new JLabel("<html>マッチング中...<br><h3>プレイヤー</h3></html>");
 
             //font arialだと文字化け->メイリオで解決※windows以外だとどうなるか不明
             waitingLabel.setFont(new Font("メイリオ", Font.BOLD, 36));
@@ -270,6 +275,14 @@ public class GUI extends JFrame {
             new Thread(() -> {
                 while (!gameStarted) {
                     try {
+                        //プレイヤーの表示
+                        String t = "<html>";
+                        for(Player p : client.myRoom.getAllPlayers()){
+                            t += p.getDisplayName() + "    " 
+                            + (p.isReady() ? "準備ok!" : "") +  "<br>";
+                        }
+                        t += "</html>";
+                        playerLabel.setText(t);
                         gameStarted = client.checkGameFlag();
                         gameEnd = client.checkGameFlag();
                         System.out.println(gameStarted);
@@ -280,10 +293,12 @@ public class GUI extends JFrame {
                     }
                 }
                 SwingUtilities.invokeLater(() -> {
+                    readyButton.setEnabled(false);
                     Timer timer = new Timer(false);
                     TimerTask task = new TimerTask() {
                         @Override
                         public void run() {
+                            
                             //ゲームスタート
                             System.out.println("game start!");
                             setContentPane(new GamePanel());
@@ -324,11 +339,15 @@ public class GUI extends JFrame {
                     if(!client.checkGameFlag()){
                         System.out.println("gameover");
                         showResultPanel();
+                        
                     }
                     boolean[][] _visited = copyVisited(visited);
                     if (row >= 0 && row < NUM_ROWS && col >= 0 && col < NUM_COLS && board[row][col] != 0) {
                         HashSet<Point> connectedBlocks = findConnectedBlocks(row, col);
-                        ((JLabel) selectBlockPanel.getComponent(0)).setText("ブロック: " + connectedBlocks.size() + "　　　　" + "スコア" + client.myData.getScore() + "　　　　" + client.myData.getRank() + "位");
+                        ((JLabel) selectBlockPanel.getComponent(0)).setText(
+                            "<html>ブロック: " + connectedBlocks.size() + "　　　　" + "スコア" + client.myData.getScore() + "　　　　"
+                             + client.myData.getRank() + "位</html>"
+                        );
                         //((JLabel) selectBlockPanel.getComponent(1)).setText("スコア: " + client.myData.getScore());
 
 
@@ -389,7 +408,7 @@ public class GUI extends JFrame {
             //add(new ResultPanel(score), BorderLayout.CENTER);
             new Thread(
                 () -> {
-                    
+                
                     setContentPane(new ResultPanel(score));
                     revalidate();
                 })
@@ -400,6 +419,7 @@ public class GUI extends JFrame {
         //result
         class ResultPanel extends JPanel {
             private int finalScore;
+            private JButton restartButton;
 
             public ResultPanel(int score) {
                 //自分のスコア
@@ -435,7 +455,7 @@ public class GUI extends JFrame {
                 winnerLabel.setHorizontalAlignment(SwingConstants.CENTER);
                
                 
-                JButton restartButton = new JButton("Restart Game");
+                restartButton = new JButton("Restart Game");
                 restartButton.addActionListener(e -> restartGame());
     
 
@@ -451,14 +471,16 @@ public class GUI extends JFrame {
             }
 
             private void restartGame() {
+                restartButton.setEnabled(false);
                 new Thread(
                     () -> {
-                        setContentPane(new TitleScreenPanel());
                         
+                        setContentPane(new TitleScreenPanel());
                         revalidate();
+                        initializeBoard();
                     })
                 .start();
-                initializeBoard();
+                
             }
         }
 
@@ -692,12 +714,18 @@ public class GUI extends JFrame {
 
 
     //チャット欄(重ねて表示)
-    class ChatPanel extends JPanel {
+    class ChatPanel extends JLayeredPane {
         public ChatPanel() {
+            
             setBounds((int) (WINDOW_X * 0.6), (int) (WINDOW_Y * 0.8), 300, 100);
 
-            setBackground(new Color(.5f, .8f, .5f, .5f));
+            JTextArea textarea = new JTextArea(10, 40);
+            JScrollPane scrollpane = new JScrollPane(textarea);
+            textarea.setEditable(false);
+            add(textarea);
             add(new JButton(">>>"));
+            setBackground(new Color(.5f, .8f, .5f, .5f));
+
         }
     }
 
@@ -758,7 +786,31 @@ public class GUI extends JFrame {
             e.printStackTrace();
         }
     }
+    // 背景画像を描画する JLayeredPane
+    class BGImageLayeredPane extends JLayeredPane {
+        BGImageLayeredPane() {}
 
+        void setImage(Image img) {
+        bgImage = img;
+        }
+        Image bgImage;
+
+        @Override public void paint(Graphics g) {
+        if (bgImage != null) {
+            int imageh = bgImage.getHeight(null);
+            int imagew = bgImage.getWidth(null);
+
+            Dimension d = getSize();
+            for (int h = 0; h < d.getHeight(); h += imageh) {
+            for (int w = 0; w < d.getWidth(); w += imagew) {
+                g.drawImage(bgImage, w, h, this);
+            }
+            }
+        }
+        super.paint(g);
+        }
+    }
+    
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             GUI game = new GUI();

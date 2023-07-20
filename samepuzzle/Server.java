@@ -174,7 +174,7 @@ public class Server {
         Player p = r.getPlayer(uuid);
         p.setScore(score);
         
-        
+        r.makeRanking();
         //スコア判定
         if(isGameOver(r)){
             GameEnd(r);

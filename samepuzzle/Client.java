@@ -102,10 +102,12 @@ public class Client {
             p.setFromMap(map);
         }
 
-        //自分だったらmyData更新
-        //ただしゲーム中は更新しない バグ防止
-        if(newP.getUUID() == myData.getUUID() && !myData.isPlaying()){
+        if(newP.getUUID() == myData.getUUID()){
             myData = newP;
+        }
+
+        if(myData.isPlaying()){
+            myRoom.makeRanking();
         }
         
     }
