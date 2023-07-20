@@ -50,6 +50,7 @@ async def listner(cmd):
 
 
 if __name__ == "__main__":
+    subprocess.run("javac samepuzzle/Server.java" , shell=True)
     command_to_execute = "java samepuzzle/Server" 
     
     asyncio.run(listner(command_to_execute))
