@@ -158,6 +158,7 @@ public class Server {
 
         //スコア代入
         Player p = r.getPlayer(uuid);
+        p.setScore(score);
         
         
         //スコア判定
