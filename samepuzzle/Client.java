@@ -23,8 +23,8 @@ java --enable-preview TCPClient
 public class Client {
     final int portNumber = 12344;
     
-    String hostName = "localhost";
-    // hostName = "gesi.f5.si";
+    //String hostName = "localhost";
+    String hostName = "gesi.f5.si";
     final InetSocketAddress addr = new InetSocketAddress(hostName, portNumber);
     final Socket socket;
     final ObjectInputStream serverToClientStream;

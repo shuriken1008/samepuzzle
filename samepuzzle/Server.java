@@ -211,14 +211,21 @@ public class Server {
         return null;
     }
 
-    public static void gameStart(Room r){
-        //System.out.println(r.getAllPlayers());
+    public boolean checkGameStart(Room r){
         for(Player p : r.getAllPlayers()){
             System.out.println(p.getDisplayName() + "," + p.getIsReady());
             if(!p.getIsReady()){
-                return;
+                return false;
             }
         }
+
+        return true;
+    }
+    public static void gameStart(Room r){
+        //System.out.println(r.getAllPlayers());
+
+
+
         LocalDateTime nowDate = LocalDateTime.now();
         Long startAt = nowDate.plusMinutes(10).toEpochSecond(ZoneOffset.ofHours(9));
         //開始命令送信
