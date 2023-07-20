@@ -47,7 +47,7 @@ def send_loop():
 if __name__ == "__main__":
     command_to_execute = "java samepuzzle/Server" 
     
-    t1 = threading.Thread(target=execute_bash_command, command=command_to_execute)
+    t1 = threading.Thread(target=execute_bash_command, args=(command_to_execute,))
     t2 = threading.Thread(target=send_loop)
 
     t1.start()
