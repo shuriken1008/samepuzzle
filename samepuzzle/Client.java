@@ -220,14 +220,14 @@ public class Client {
 
     }  
 
-    public void sendBreakPos(int x, int y) throws IOException{
+    public void sendBreakPos(int x, int y, int score) throws IOException{
         String jStr = Json.toJson(new HashMap<String, Object>(){{
             put("type", "breakData");
             put("roomName", myData.getRoomName());
             put("uuid", myData.getUUID());
             put("x", x);
             put("y", y);
-            
+            put("score", score);
 
         }   
         });

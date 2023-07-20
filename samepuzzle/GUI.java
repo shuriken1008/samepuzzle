@@ -259,8 +259,8 @@ public class GUI extends JFrame {
                                 repaint();
                                 //ブロックデータ送信(最初にクリックした座標)
                                 try {
-                                    client.sendBreakPos(row, col);
-                                    
+                                    client.sendBreakPos(row, col, client.myData.getScore());
+
                                 } catch (IOException e1) {
                                     // TODO Auto-generated catch block
                                     e1.printStackTrace();
@@ -428,7 +428,8 @@ public class GUI extends JFrame {
                 board[row][col] = 0;
                 visited[row][col] = false;
             }
-            score += s.calc(blocks.size());
+            
+            client.myData.addScore(s.calc(blocks.size()));
         }
 
         private void compressBoard() {
