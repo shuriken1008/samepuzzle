@@ -26,7 +26,7 @@ async def execute_bash_command(command):
             break
         if output:
             out = str(output.strip())
-            #print(out)
+            print(out)
             q.put(f"```json\n{out}```")
             
     return process.poll()
