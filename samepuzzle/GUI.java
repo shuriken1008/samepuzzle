@@ -251,11 +251,7 @@ public class GUI extends JFrame {
                         public void run() {
                             //ゲームスタート
                             System.out.println("game start!");
-                            if (!gameEnd) {
-                                setContentPane(new GamePanel());
-                            } else {
-                                //setContentPane(new ResultPanel() );
-                            }
+                            setContentPane(new GamePanel());
                             revalidate();
                             timer.cancel();
 
