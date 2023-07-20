@@ -6,16 +6,16 @@ import datetime
 class Webhook:
     webhook_url = ""
 
-    def __init__(self, webhook_url:str) -> None:
-        self.webhook_url = webhook_url
+    def __init__(self, _url:str) -> None:
+        self.webhook_url = _url
 
-    def upload_to_discord(self, text, url=webhook_url, file_path=None, file_name=None):
+    def upload_to_discord(self, text, file_path=None, file_name=None):
         form = encoder.MultipartEncoder({
             "content": text,
             'file': (file_name, open(file_path, 'rb')) if not file_path == None else ""
             })
         r = requests.post(
-            url,
+            self.webhook_url,
             data=form,
             headers={"Content-Type": form.content_type}
         )

@@ -112,7 +112,7 @@ public class Server {
 
     //準備OK/NGを受け取る
     public static void onPlayerData(HashMap<String, Object> map){
-        Boolean isReady = (Boolean)map.get("isReady");
+        Boolean isReady = (String)map.get("isReady") == "true" ? true: false;
         String uuid = (String)map.get("uuid");
         String roomName = (String)map.get("roomName");
 

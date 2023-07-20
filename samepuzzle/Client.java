@@ -251,8 +251,9 @@ public class Client {
 
         //準備完了を送信
         myData.setReady(true);
-
         sendMyData();
+
+        
         
         
     }
