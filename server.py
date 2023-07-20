@@ -9,7 +9,7 @@ q = queue.Queue()
 
 async def asyncio_main(cmd):
     asyncio.ensure_future(execute_bash_command(cmd))
-    asyncio.ensure_future(send_loop)
+    asyncio.ensure_future(send_loop())
 
 
 async def execute_bash_command(command):
