@@ -9,12 +9,15 @@ public class Player {
     private String roomName;
     private int rank = 0;
     private int score = 0;
+    private int targetScore;
     private int stageLevel = 0;
 
     private boolean isOwner = false;
     private boolean isPlaying = false;
     private boolean isReady = false;
     
+    private Long gameStartAt;
+    private boolean isGameEnded = true;
     private Stage myStage;
 
 
@@ -37,12 +40,31 @@ public class Player {
     public Boolean getIsReady(){
         return isReady;
     }
-    public void setReady(Boolean f){
+    public void setIsReady(boolean f){
         isReady = f;
+    }
+    public boolean getIsPlaying(){
+        return isPlaying;
+    }
+    public void setIsPlaying(Boolean f){
+        isPlaying = f;
+    }
+    public void setIsGameEnded(boolean f){
+        isGameEnded = f;
+    }
+    public boolean getIsGameEnded(){
+        return isGameEnded;
     }
 
     public String getDisplayName(){
         return displayName;
+    }
+
+    public void setGameStartTime(Long s){
+        gameStartAt = s;
+    }
+    public Long getGameStartTime(){
+        return gameStartAt;
     }
 
     public void setRoomName(String roomName){
@@ -56,8 +78,20 @@ public class Player {
         return rank;
     }
 
+    public void resetScore(){
+        score = 0;
+    }
+    public void addScore(int score){
+        this.score += score;
+    }
     public int getScore(){
         return score;
+    }
+    public void setTargetScore(int score){
+        targetScore = score;
+    }
+    public int getTargetScore(){
+        return targetScore;
     }
 
     public void setFromMap(HashMap<String, Object> map){

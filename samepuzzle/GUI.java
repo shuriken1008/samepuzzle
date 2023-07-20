@@ -2,12 +2,17 @@ package samepuzzle;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.TimerTask;
+import java.util.Timer;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -42,8 +47,8 @@ public class GUI extends JFrame {
 
     private Score s = new Score();
 
-    private Sound SESelect = new Sound("./SE/select.wav");
-    private Sound SEBrake = new Sound("./SE/b2.wav");
+    private Sound SESelect = new Sound("./media/select.wav");
+    private Sound SEBrake = new Sound("./media/b2.wav");
 
 
     private String displayName;
@@ -150,34 +155,67 @@ public class GUI extends JFrame {
             setLayout(new BorderLayout());
 
             JLabel waitingLabel = new JLabel("マッチング中...");
-            waitingLabel.setFont(new Font("Arial", Font.BOLD, 36));
+            
+            //font arialだと文字化け->メイリオで解決※windows以外だとどうなるか不明
+            waitingLabel.setFont(new Font("メイリオ", Font.BOLD, 36));
+            
             waitingLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
             JLabel playerLabel = new JLabel("プレイヤー名：" + playerName);
             JLabel roomLabel = new JLabel("部屋名：" + exroomName);
 
+            JButton readyButton = new JButton("準備完了！");    
+            readyButton.addActionListener(new ActionListener(){
+                private boolean isReady = false;
+                public void actionPerformed(ActionEvent e) {
+                    readyButton.setText(isReady? "取り消す": "準備完了！");
+                    JOptionPane.showMessageDialog(null, "Hello, Event Test!");
+                    try {
+                        client.myData.setIsReady(true);
+                        client.sendMyData();
+                    } catch (IOException e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
+                }
+            });
+
             JPanel contentPanel = new JPanel(new GridLayout(3, 1));
             contentPanel.add(waitingLabel);
             contentPanel.add(playerLabel);
             contentPanel.add(roomLabel);
+            contentPanel.add(readyButton);
 
             add(contentPanel, BorderLayout.CENTER);
 
-            //WaitingPanel -> GamePanelに画面遷移
-//            new Tread(() -> {
-//                while (!gameStarted) {
-//                    try {
-//                        gameStarted = client.checkGameFlag();
-//                        Thread.sleep(1000); //1 secoundごとにチェック
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//                SwingUtilities.invokeLater(() -> {
-//                    setContentPane(new GamePanel());
-//                    revalidate();
-//                });
-//            }).start();
+            new Thread(() -> {
+                while (!gameStarted) {
+                    try {
+                        gameStarted = client.checkGameFlag();
+                        System.out.println(gameStarted);
+                        Thread.sleep(1000); //1 secoundごとにチェック
+                        //
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                SwingUtilities.invokeLater(() -> {
+                    Timer timer = new Timer(false);
+                    TimerTask task = new TimerTask() {
+                        @Override
+                        public void run() {
+                            //ゲームスタート
+                            System.out.println("game start!");
+                            setContentPane(new GamePanel());
+                            revalidate();
+                            timer.cancel();
+                        }
+                    };
+
+                    timer.schedule(task,client.myData.getGameStartTime());
+                    System.out.println("game start at " + client.myData.getGameStartTime());
+                });
+            }).start();
         }
     }
 
@@ -532,7 +570,7 @@ public class GUI extends JFrame {
 
         public void BackImPanel() {
             try {
-                backgroundImage = ImageIO.read(new File("image.png"));
+                backgroundImage = ImageIO.read(new File("./media/back.png"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -559,8 +597,8 @@ public class GUI extends JFrame {
     public void connectToServer(String displayName, String roomName) {
 
         try {
-            client = new Client(displayName);
-            client.connect(roomName);
+            client = new Client(displayName,roomName);
+            client.connect();
 
         } catch (IOException e) {
             // TODO Auto-generated catch block

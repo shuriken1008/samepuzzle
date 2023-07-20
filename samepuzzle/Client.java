@@ -31,7 +31,9 @@ public class Client {
     static ObjectOutputStream clientToServerStream;
 
     private Room myRoom ;
-    private static Player myData; 
+    static Player myData; 
+
+
     
     public Client(String displayName , String roomName) throws IOException {
         myData = new Player(displayName);
@@ -136,17 +138,10 @@ public class Client {
         int targetScore = Integer.valueOf((String)map.get("targetScore"));
         long epochSec = Long.valueOf((String)map.get("startAt"));
         
-        Timer timer = new Timer(false);
-		TimerTask task = new TimerTask() {
-			@Override
-			public void run() {
-				//ゲームスタート
-
-				timer.cancel();
-			}
-		};
-
-        timer.schedule(task, epochSec);
+        myData.setGameStartTime(epochSec);
+        myData.setIsPlaying(true);
+        myData.setIsGameEnded(false);
+        myData.setTargetScore(targetScore);
 
         //ターゲットスコア表示セット
 
@@ -256,11 +251,18 @@ public class Client {
         
 
         //準備完了を送信
-        myData.setReady(true);
+        myData.setIsReady(true);
         sendMyData();
 
 
         
         
+    }
+
+    public boolean checkGameFlag() {
+        if(myData.getIsPlaying() && !myData.getIsGameEnded()){
+            return true;
+        }
+        return false;
     }
 }

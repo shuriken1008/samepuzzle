@@ -119,7 +119,7 @@ public class Server {
         
         Player p = r.getPlayer(newP.getUUID());
         //System.out.println("newP" + newP.getIsReady());
-        p.setReady(newP.getIsReady());
+        p.setIsReady(newP.getIsReady());
 
         gameStart(r);
 
@@ -227,7 +227,7 @@ public class Server {
 
 
         LocalDateTime nowDate = LocalDateTime.now();
-        Long startAt = nowDate.plusMinutes(10).toEpochSecond(ZoneOffset.ofHours(9));
+        Long startAt = nowDate.plusSeconds(10).toEpochSecond(ZoneOffset.ofHours(9));
         //開始命令送信
         HashMap<String, Object> map = new HashMap<>(){{
             put("type", "gameStart");
