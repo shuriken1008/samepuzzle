@@ -227,7 +227,7 @@ public class Server {
 
 
         LocalDateTime nowDate = LocalDateTime.now();
-        Long startAt = nowDate.plusSeconds(10).toEpochSecond(ZoneOffset.ofHours(9));
+        Long startAt = nowDate.plusSeconds(10).toEpochSecond(ZoneOffset.UTC);
         //開始命令送信
         HashMap<String, Object> map = new HashMap<>(){{
             put("type", "gameStart");
