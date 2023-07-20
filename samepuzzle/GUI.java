@@ -22,7 +22,7 @@ public class GUI extends JFrame {
     private static final int BOARD_Y = 35;
 
     private static final int WINDOW_X = 800;
-    private static final int WINDOW_Y = 600;    
+    private static final int WINDOW_Y = 600;
 
     private static final int OFFSET = 2;
 
@@ -59,7 +59,7 @@ public class GUI extends JFrame {
 
         add(new ChatPanel());
         add(new TitleScreenPanel());
-        
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -82,36 +82,84 @@ public class GUI extends JFrame {
 
     // Title
     class TitleScreenPanel extends JPanel {
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
+        private JTextField playerTextField;
+        private JTextField roomTextField;
 
-            g.setColor(Color.BLACK);
-            g.setFont(new Font("Arial", Font.BOLD, 36));
+        public TitleScreenPanel() {
+            setLayout(new BorderLayout());
 
-            Dimension size = getSize();
-            FontMetrics fm = g.getFontMetrics();
+            JPanel inputPanel = new JPanel(new GridLayout(3, 2));
 
-            int x = (size.width - fm.stringWidth("SameGame")) / 2;
-            int y = (size.height - fm.getHeight()) / 2 + fm.getAscent();
+            JLabel titleLabel = new JLabel("SameGame");
+            titleLabel.setFont(new Font("Arial", Font.BOLD, 36));
+            titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-            g.drawString("SameGame", x, y);
+            JLabel playerLabel = new JLabel("プレイヤー名：");
+            playerTextField = new JTextField();
 
-            g.setFont(new Font("Arial", Font.PLAIN, 20));
-            fm = g.getFontMetrics();
+            JLabel roomLabel = new JLabel("部屋名：");
+            roomTextField = new JTextField();
 
-            x = (size.width - fm.stringWidth("Click to start")) / 2;
-            y += fm.getHeight() + 20;
+            JButton startButton = new JButton("ゲームを開始");
+            startButton.addActionListener(e -> startGame());
 
-            g.drawString("Click to start", x, y);
+            inputPanel.add(titleLabel);
+            inputPanel.add(new JLabel());
+            inputPanel.add(playerLabel);
+            inputPanel.add(playerTextField);
+            inputPanel.add(roomLabel);
+            inputPanel.add(roomTextField);
 
-            //ボタン配置
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.add(startButton);
 
-            //テキストボックスPlayer
+            add(inputPanel, BorderLayout.CENTER);
+            add(buttonPanel, BorderLayout.SOUTH);
+        }
 
-            //text- RoomName
+        private void startGame() {
+            String playerName = playerTextField.getText();
+            String roomName = roomTextField.getText();
+
+            if (!playerName.isEmpty() && !roomName.isEmpty()) {
+                displayName = playerName;
+                roomName = roomName;
+
+                setContentPane(new GamePanel());
+                revalidate();
+            } else {
+                JOptionPane.showMessageDialog(this, "プレイヤー名と部屋名を入力してください。");
+            }
         }
     }
+
+    //waiting panel　未実装
+    class WaitingPanel extends JPanel {
+        private String playerName;
+        private String roomName;
+
+        public WaitingPanel(String playerName, String roomName) {
+            this.playerName = playerName;
+            this.roomName = roomName;
+            setLayout(new BorderLayout());
+
+            JLabel waitingLabel = new JLabel("マッチング中...");
+            waitingLabel.setFont(new Font("Arial", Font.BOLD, 36));
+            waitingLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+            JLabel playerLabel = new JLabel("プレイヤー名：" + playerName);
+            JLabel roomLabel = new JLabel("部屋名：" + roomName);
+
+            JPanel contentPanel = new JPanel(new GridLayout(3, 1));
+            contentPanel.add(waitingLabel);
+            contentPanel.add(playerLabel);
+            contentPanel.add(roomLabel);
+
+            add(contentPanel, BorderLayout.CENTER);
+        }
+    }
+
+
 
     // Game Panel
     class GamePanel extends JPanel {
@@ -176,6 +224,49 @@ public class GUI extends JFrame {
                 }
             });
         }
+
+        //result
+        class ResultPanel extends JPanel {
+            private int finalScore;
+
+            public ResultPanel(int score) {
+                this.finalScore = score;
+
+                setLayout(new BorderLayout());
+
+                JLabel resultLabel = new JLabel("Finish!");
+                resultLabel.setFont(new Font("Arial", Font.BOLD, 36));
+                resultLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+                JLabel scoreLabel = new JLabel("Final Score: " + score);
+                scoreLabel.setFont(new Font("Arial", Font.PLAIN, 24));
+                scoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+                JButton restartButton = new JButton("Restart Game");
+                restartButton.addActionListener(e -> restartGame());
+
+                JPanel contentPanel = new JPanel(new GridLayout(3, 1));
+                contentPanel.add(resultLabel);
+                contentPanel.add(scoreLabel);
+                contentPanel.add(restartButton);
+
+                add(contentPanel, BorderLayout.CENTER);
+            }
+
+            private void restartGame() {
+                initializeBoard();
+                setContentPane(new TitleScreenPanel());
+                revalidate();
+            }
+        }
+
+        private void showResultPanel() {
+            ResultPanel resultPanel = new ResultPanel(score);
+            remove(boardPanel);
+            add(resultPanel, BorderLayout.CENTER);
+            revalidate();
+        }
+
 
         public void receiveBlockData(int[][] data){
             for(int row = 0; row < NUM_ROWS; row++){
@@ -308,17 +399,11 @@ public class GUI extends JFrame {
         }
 
         private void createScoreLabel() {
-            String playerName = JOptionPane.showInputDialog(this, "名前を入力してください。");
-            String roomName = JOptionPane.showInputDialog(this, "部屋名を入力してください。");
-            
-            connectToServer(playerName, roomName);
-            
-
-
+            connectToServer(displayName, roomName);
 
             JPanel scorePanel = new JPanel();
 
-            JLabel nameLabel = new JLabel("Player: " + playerName);
+            JLabel nameLabel = new JLabel("Player: " + displayName);
             nameLabel.setHorizontalAlignment(SwingConstants.LEFT);
 
             scoreLabel = new JLabel("Score: 0");
@@ -330,6 +415,7 @@ public class GUI extends JFrame {
             scorePanel.setBounds(BOARD_X, 0, NUM_COLS * BLOCK_SIZE, BOARD_Y);
             add(scorePanel);
         }
+
 
         private void createSelBlockPanel() {
             selectBlockPanel = new JPanel();
@@ -405,7 +491,7 @@ public class GUI extends JFrame {
 
     //背景画像表示
     class BackImgPanel extends JPanel{
-        
+
     }
 
     //ゲーム画面の外枠(おまけ)
@@ -419,11 +505,11 @@ public class GUI extends JFrame {
 
 
     public void connectToServer(String displayName, String roomName){
-        
+
         try {
             client = new Client(displayName);
             client.connect(roomName);
-            
+
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
