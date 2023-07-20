@@ -177,6 +177,7 @@ public class GUI extends JFrame {
         private String playerName;
         private String exroomName;
         private volatile boolean gameStarted = false;
+        private volatile boolean gameEnd = false;
 
         public WaitingPanel(String playerName, String exroomName) {
             this.playerName = playerName;
@@ -235,6 +236,7 @@ public class GUI extends JFrame {
                 while (!gameStarted) {
                     try {
                         gameStarted = client.checkGameFlag();
+                        gameEnd = client.checkGameFlag();
                         System.out.println(gameStarted);
                         Thread.sleep(1000); //1 secoundごとにチェック
                         //
@@ -249,9 +251,14 @@ public class GUI extends JFrame {
                         public void run() {
                             //ゲームスタート
                             System.out.println("game start!");
-                            setContentPane(new GamePanel());
+                            if (!gameEnd) {
+                                setContentPane(new GamePanel());
+                            } else {
+                                setContentPane(new showResultPanel() );
+                            }
                             revalidate();
                             timer.cancel();
+
                         }
                     };
                     Long epoch = client.myData.getGameStartTime();
@@ -340,12 +347,11 @@ public class GUI extends JFrame {
         }
 
         private void showResultPanel() {
-            ResultPanel resultPanel = new ResultPanel(score);
+            gameFinish = true;
             remove(boardPanel);
-            add(resultPanel, BorderLayout.CENTER);
+            add(new ResultPanel(score), BorderLayout.CENTER);
             revalidate();
         }
-
 
         //result
         class ResultPanel extends JPanel {
@@ -553,11 +559,6 @@ public class GUI extends JFrame {
             g.setColor(Color.WHITE);
             g.fillRect(0, 0, WINDOW_X, WINDOW_Y);
 
-            //gameFinishになったらresult表示
-            if(gameFinish){
-                showResultPanel();
-                return;
-            }
 
             for (int row = 0; row < NUM_ROWS; row++) {
                 for (int col = 0; col < NUM_COLS; col++) {
