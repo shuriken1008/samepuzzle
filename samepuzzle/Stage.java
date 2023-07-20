@@ -323,7 +323,24 @@ public static int[] moveZerosToStart(int[] array) {
         }
     }
 
+    private boolean checkAdjacentBlocks(int row, int col) {
+        int color = board[row][col];
 
+        if (row - 1 >= 0 && board[row - 1][col] == color) {
+            return false;
+        }
+        if (row + 1 < NUM_ROWS && board[row + 1][col] == color) {
+            return false;
+        }
+        if (col - 1 >= 0 && board[row][col - 1] == color) {
+            return false;
+        }
+        if (col + 1 < NUM_COLS && board[row][col + 1] == color) {
+            return false;
+        }
+
+        return true;
+    }
 
 
     public static String dataToString(){
