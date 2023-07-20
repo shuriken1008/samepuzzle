@@ -113,6 +113,7 @@ public class GUI extends JFrame {
             exroomTextField = new JTextField();
 
             JButton startButton = new JButton("ゲームを開始");
+            startButton.setPreferredSize(new Dimension(200, 60));
             startButton.addActionListener(e -> startGame());
 
             inputPanel.add(titleLabel);
