@@ -182,23 +182,39 @@ public class GUI extends JFrame {
             this.playerName = playerName;
             this.exroomName = roomName;
             setLayout(new BorderLayout());
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
 
             JLabel waitingLabel = new JLabel("マッチング中...");
-            
+
             //font arialだと文字化け->メイリオで解決※windows以外だとどうなるか不明
             waitingLabel.setFont(new Font("メイリオ", Font.BOLD, 36));
-            
+
             waitingLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-            JLabel playerLabel = new JLabel("プレイヤー名：" + playerName);
-            JLabel roomLabel = new JLabel("部屋名：" + exroomName);
+            JLabel playerLabel = new JLabel("プレイヤー名：" + playerName + "/" + "部屋名：" + exroomName);
+            playerLabel.setFont(new Font("メイリオ", Font.BOLD, 28));
+            playerLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-            JButton readyButton = new JButton("準備完了！");    
+
+            JButton readyButton = new JButton("準備完了！");
+            readyButton.setPreferredSize(new Dimension(20, 10));
+            readyButton.setAlignmentX(SwingConstants.CENTER);
+
+            JPanel contentPanel = new JPanel(new GridLayout(3, 1));
+            contentPanel.add(waitingLabel);
+            contentPanel.add(playerLabel);
+            contentPanel.add(readyButton);
+
+            add(contentPanel, BorderLayout.CENTER);
+
+
+
             readyButton.addActionListener(new ActionListener(){
                 private boolean isReady = false;
                 public void actionPerformed(ActionEvent e) {
                     readyButton.setText(isReady? "取り消す": "準備完了！");
-                    JOptionPane.showMessageDialog(null, "Hello, Event Test!");
+                    JOptionPane.showMessageDialog(null, "マッチング中");
                     try {
                         client.myData.setIsReady(true);
                         client.sendMyData();
@@ -209,10 +225,8 @@ public class GUI extends JFrame {
                 }
             });
 
-            JPanel contentPanel = new JPanel(new GridLayout(3, 1));
             contentPanel.add(waitingLabel);
             contentPanel.add(playerLabel);
-            contentPanel.add(roomLabel);
             contentPanel.add(readyButton);
 
             add(contentPanel, BorderLayout.CENTER);
@@ -453,7 +467,7 @@ public class GUI extends JFrame {
                 board[row][col] = 0;
                 visited[row][col] = false;
             }
-            
+
             client.myData.addScore(s.calc(blocks.size()));
         }
 
