@@ -63,7 +63,7 @@ public class GUI extends JFrame {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                setContentPane(new GamePanel());
+                //setContentPane(new GamePanel());
                 revalidate();
             }
         });
@@ -82,67 +82,67 @@ public class GUI extends JFrame {
 
     // Title
     class TitleScreenPanel extends JPanel {
-            private JTextField playerTextField;
-            private JTextField roomTextField;
+        private JTextField playerTextField;
+        private JTextField exroomTextField;
 
-            public TitleScreenPanel() {
-                setLayout(new BorderLayout());
+        public TitleScreenPanel() {
+            setLayout(new BorderLayout());
 
-                JPanel inputPanel = new JPanel(new GridLayout(3, 2));
+            JPanel inputPanel = new JPanel(new GridLayout(3, 2));
 
-                JLabel titleLabel = new JLabel("SameGame");
-                titleLabel.setFont(new Font("Arial", Font.BOLD, 36));
-                titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            JLabel titleLabel = new JLabel("SameGame");
+            titleLabel.setFont(new Font("Arial", Font.BOLD, 36));
+            titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-                JLabel playerLabel = new JLabel("プレイヤー名：");
-                playerTextField = new JTextField();
+            JLabel playerLabel = new JLabel("プレイヤー名：");
+            playerTextField = new JTextField();
 
-                JLabel roomLabel = new JLabel("部屋名：");
-                roomTextField = new JTextField();
+            JLabel roomLabel = new JLabel("部屋名：");
+            exroomTextField = new JTextField();
 
-                JButton startButton = new JButton("ゲームを開始");
-                startButton.addActionListener(e -> startGame());
+            JButton startButton = new JButton("ゲームを開始");
+            startButton.addActionListener(e -> startGame());
 
-                inputPanel.add(titleLabel);
-                inputPanel.add(new JLabel());
-                inputPanel.add(playerLabel);
-                inputPanel.add(playerTextField);
-                inputPanel.add(roomLabel);
-                inputPanel.add(roomTextField);
+            inputPanel.add(titleLabel);
+            inputPanel.add(new JLabel());
+            inputPanel.add(playerLabel);
+            inputPanel.add(playerTextField);
+            inputPanel.add(roomLabel);
+            inputPanel.add(exroomTextField);
 
-                JPanel buttonPanel = new JPanel();
-                buttonPanel.add(startButton);
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.add(startButton);
 
-                add(inputPanel, BorderLayout.CENTER);
-                add(buttonPanel, BorderLayout.SOUTH);
-            }
-
-            private void startGame() {
-                String playerName = playerTextField.getText();
-                String roomName = roomTextField.getText();
-
-                if (!playerName.isEmpty() && !roomName.isEmpty()) {
-                    displayName = playerName;
-                    roomName = roomName;
-
-                    //waiting panelを表示するようにしているがうまくいかない
-                    setContentPane(new WaitingPanel(playerName, roomName));
-                    revalidate();
-                } else {
-                    JOptionPane.showMessageDialog(this, "プレイヤー名と部屋名を入力してください。");
-                }
-            }
+            add(inputPanel, BorderLayout.CENTER);
+            add(buttonPanel, BorderLayout.SOUTH);
         }
 
+        private void startGame() {
+            String playerName = playerTextField.getText();
+            String exroomName = exroomTextField.getText();
 
-        //waiting panel　未実装
+            if (!playerName.isEmpty() && !exroomName.isEmpty()) {
+                displayName = playerName;
+                roomName = exroomName;
+
+                setContentPane(new GamePanel());
+                setContentPane(new WaitingPanel(playerName, exroomName));
+                revalidate();
+            } else {
+                JOptionPane.showMessageDialog(this, "プレイヤー名と部屋名を入力してください。");
+            }
+        }
+    }
+
+
+    //waiting panel　未実装
     class WaitingPanel extends JPanel {
         private String playerName;
-        private String roomName;
+        private String exroomName;
 
-        public WaitingPanel(String playerName, String roomName) {
+        public WaitingPanel(String playerName, String exroomName) {
             this.playerName = playerName;
-            this.roomName = roomName;
+            this.exroomName = roomName;
             setLayout(new BorderLayout());
 
             JLabel waitingLabel = new JLabel("マッチング中...");
@@ -150,7 +150,7 @@ public class GUI extends JFrame {
             waitingLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
             JLabel playerLabel = new JLabel("プレイヤー名：" + playerName);
-            JLabel roomLabel = new JLabel("部屋名：" + roomName);
+            JLabel roomLabel = new JLabel("部屋名：" + exroomName);
 
             JPanel contentPanel = new JPanel(new GridLayout(3, 1));
             contentPanel.add(waitingLabel);
