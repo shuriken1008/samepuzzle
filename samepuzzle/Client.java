@@ -25,10 +25,10 @@ public class Client {
     final InetSocketAddress addr = new InetSocketAddress("gesi.f5.si", portNumber);
     final Socket socket;
     final ObjectInputStream serverToClientStream;
-    final ObjectOutputStream clientToServerStream;
+    static ObjectOutputStream clientToServerStream;
 
     private Room myRoom ;
-    private Player myData; 
+    private static Player myData; 
     
     public Client(String displayName) throws IOException {
         myData = new Player(displayName);
@@ -94,6 +94,11 @@ public class Client {
             myRoom.addPlayer(newP);
         }else{
             p.setFromMap(map);
+        }
+
+        //自分だったらmyData更新
+        if(newP.getUUID() == myData.getUUID()){
+            myData = newP;
         }
         
     }
@@ -210,16 +215,8 @@ public class Client {
         clientToServerStream.flush();
     }
 
-    public void sendPlayerData() throws IOException{
-        String jStr = Json.toJson(new HashMap<String, Object>(){{
-            put("type", "playerData");
-            put("uuid", myData.getUUID());
-            
-
-        }   
-        });
-
-        clientToServerStream.writeUTF(jStr);
+    public static void sendMyData() throws IOException{
+        clientToServerStream.writeUTF(myData.toJson());
         clientToServerStream.flush();
 
     }  
@@ -252,6 +249,10 @@ public class Client {
         Client client = new Client(name);
         client.connect(roomeName);
 
+        //準備完了を送信
+        myData.setReady(true);
+
+        sendMyData();
         
         
     }
