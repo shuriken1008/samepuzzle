@@ -168,7 +168,7 @@ public class GUI extends JFrame {
 //                while (!gameStarted) {
 //                    try {
 //                        gameStarted = client.checkGameFlag();
-//                        Thread.sleep(1000); //isecond　checking again
+//                        Thread.sleep(1000); //1secoundごとにチェック
 //                    } catch (InterruptedException e) {
 //                        e.printStackTrace();
 //                    }
