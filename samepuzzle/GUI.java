@@ -1,6 +1,9 @@
 package samepuzzle;
 
 import javax.swing.*;
+
+import samepuzzle.GUI.GamePanel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,6 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.TimerTask;
@@ -211,9 +215,10 @@ public class GUI extends JFrame {
                             timer.cancel();
                         }
                     };
-
-                    timer.schedule(task,client.myData.getGameStartTime());
-                    System.out.println("game start at " + client.myData.getGameStartTime());
+                    Long epoch = client.myData.getGameStartTime();
+                    Date d = new Date(epoch*1000);
+                    timer.schedule(task,d);
+                    System.out.println("game start at " + d.toString());
                 });
             }).start();
         }
