@@ -137,13 +137,15 @@ public class GUI extends JFrame {
             if (!playerName.isEmpty() && !exroomName.isEmpty()) {
                 displayName = playerName;
                 roomName = exroomName;
-
-                setContentPane(new GamePanel());
+                connectToServer(displayName, roomName);
+                //setContentPane(new GamePanel());
                 setContentPane(new WaitingPanel(playerName, exroomName));
                 revalidate();
             } else {
                 JOptionPane.showMessageDialog(this, "プレイヤー名と部屋名を入力してください。");
             }
+
+            
         }
     }
 
@@ -282,6 +284,7 @@ public class GUI extends JFrame {
                                     showReStartMessage();
                                     initializeBoard();
                                     repaint();
+                                    
                                 }
                             }
                         } else {
@@ -471,7 +474,7 @@ public class GUI extends JFrame {
         }
 
         private void createScoreLabel() {
-            connectToServer(displayName, roomName);
+            // 
 
             JPanel scorePanel = new JPanel();
 

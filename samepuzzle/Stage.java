@@ -1,6 +1,8 @@
 package samepuzzle;
 
+import java.awt.Point;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -14,45 +16,62 @@ public class Stage {
     public static int PURPLE = 0x6a2199;
     public static int GREEN = 0x1a6700;
     public static int BLUE = 0x0064d9;
+    private static final int NUM_ROWS = 20;
+    private static final int NUM_COLS = 20;
+    private static final int BLOCK_SIZE = 20;
+    private static final int BOARD_X = 10;
+    private static final int BOARD_Y = 35;
+
+    private static final int WINDOW_X = 800;
+    private static final int WINDOW_Y = 600;
+
+    private static final int OFFSET = 2;
+
+    private HashSet<Point> lastConnectedBlocks = new HashSet<>();
 
 
-    private static int data[][];
+    private static int board[][];
+    private static boolean visited[][];
+    private Score s = new Score();
+
+    private int score = 0;
+
     private int stageLevel = 0;
     private int stageSize;
 
 
     public Stage(int size){
         this.stageSize = size;
-        data = new int[size][size];
+        board= new int[size][size];
     }
     public Stage(int size, int stageLevel){
         this.stageSize = size;
         this.stageLevel = stageLevel;
-        data = new int[size][size];
+        board= new int[size][size];
     }
     public Stage(int size, int stageLevel, int[][] stageData){
         this.stageSize = size;
         this.stageLevel = stageLevel;
-        data = stageData;
+        board= stageData;
     }
 
 
     public void generateNewStage(){
         Random rand = new Random();
 
-        for(int x=0; x<data.length; x++){
-            for(int y=0; y<data.length; y++){
-                data[x][y] = rand.nextInt(5) + 1;
+        for(int x=0; x<board.length; x++){
+            for(int y=0; y<board.length; y++){
+                board[x][y] = rand.nextInt(5) + 1;
             }
         }
     }
 
     public void importStage(int d[][]){
-        data = d.clone();
+        board= d.clone();
     }
 
     public int[][] exportStage(){
-        return data.clone();
+        return board.clone();
     }
 
     public int breakBlock(int x, int y){
@@ -60,10 +79,10 @@ public class Stage {
         int blockId;
 
         if(isBreakable(x, y)){
-            blockId = data[x][y];
+            blockId = board[x][y];
 
             totalBlocks = 1;
-            data[x][y] = 0;
+            board[x][y] = 0;
             totalBlocks += breakBlock(x+1, y, x, y, blockId);
             totalBlocks += breakBlock(x-1, y, x, y, blockId);
             totalBlocks += breakBlock(x, y+1, x, y, blockId);
@@ -79,16 +98,16 @@ public class Stage {
     private int breakBlock(int x, int y, int beforeX, int beforeY, int blockId){
         int totalBlocks = 0;
         if(
-            x<0 || x >= data.length ||
-            y<0 || y >= data[x].length
+            x<0 || x >= board.length ||
+            y<0 || y >= board[x].length
         ){return 0;}
 
-        if(data[x][y] == blockId){
+        if(board[x][y] == blockId){
             
         
 
             totalBlocks = 1;
-            data[x][y] = 0;
+            board[x][y] = 0;
             if(x+1 != beforeX){
                 totalBlocks += breakBlock(x+1, y, x, y, blockId);
             }
@@ -109,15 +128,15 @@ public class Stage {
 
     public boolean isBreakable(int x, int y){
         if(
-            x<0 || x >= data.length ||
-            y<0 || y >= data[x].length
+            x<0 || x >= board.length ||
+            y<0 || y >= board[x].length
         ){return false;}
 
-        if(data[x][y] == 0){
+        if(board[x][y] == 0){
             return false;
         }
 
-        int blockId = data[x][y];
+        int blockId = board[x][y];
         if(
             isBreakable(x+1, y, blockId) || isBreakable(x-1, y, blockId) ||
             isBreakable(x, y+1, blockId) || isBreakable(x, y-1, blockId)
@@ -131,11 +150,11 @@ public class Stage {
     }
     public boolean isBreakable(int x, int y, int blockId){
         if(
-            x<0 || x >= data.length ||
-            y<0 || y >= data[x].length
+            x<0 || x >= board.length ||
+            y<0 || y >= board[x].length
         ){return false;}
 
-        if(data[x][y] == blockId){
+        if(board[x][y] == blockId){
             return true;
         }
 
@@ -164,13 +183,13 @@ public static int[] moveZerosToStart(int[] array) {
     }
 
     public void updatedata(){
-        for(int y=0; y<data.length; y++){
-            int[] result = new int[data.length];
+        for(int y=0; y<board.length; y++){
+            int[] result = new int[board.length];
             int index = result.length - 1;
             // 0以外の要素を新しい配列の末尾から詰めていく
-            for (int x = data.length - 1; x >= 0; x--) {
-                if (data[x][y] != 0) {
-                    result[index] = data[x][y];
+            for (int x = board.length - 1; x >= 0; x--) {
+                if (board[x][y] != 0) {
+                    result[index] = board[x][y];
                     index--;
                 }
             }
@@ -180,16 +199,16 @@ public static int[] moveZerosToStart(int[] array) {
                 index--;
             }
 
-            for(int x =0;x<data.length; x++){
-                data[x][y] = result[x];
+            for(int x =0;x<board.length; x++){
+                board[x][y] = result[x];
             }
         }
     }
 
     public void isGameOver(){
-        for(int x=0; x<data.length; x++){
-            for(int y=0; y<data.length; y++){
-                if(data[x][y] == 0){
+        for(int x=0; x<board.length; x++){
+            for(int y=0; y<board.length; y++){
+                if(board[x][y] == 0){
                     continue;
                 }else{
 
@@ -199,8 +218,8 @@ public static int[] moveZerosToStart(int[] array) {
     }
 
     public void showStdOut(){
-        for(int x=0; x<data.length; x++){
-            for(int y:data[x]){
+        for(int x=0; x<board.length; x++){
+            for(int y:board[x]){
                 String t = "";
                 switch(y){
                     case(0)->{
@@ -227,10 +246,89 @@ public static int[] moveZerosToStart(int[] array) {
             System.out.println();
         }
     }
+    private HashSet<Point> findConnectedBlocks(int startRow, int startCol) {
+        int color = board[startRow][startCol];
+        visited[startRow][startCol] = true;
+
+        HashSet<Point> connectedBlocks = new HashSet<>();
+        connectedBlocks.add(new Point(startRow, startCol));
+
+        if (startRow - 1 >= 0 && board[startRow - 1][startCol] == color && !visited[startRow - 1][startCol]) {
+            connectedBlocks.addAll(findConnectedBlocks(startRow - 1, startCol));
+        }
+        if (startRow + 1 < NUM_ROWS && board[startRow + 1][startCol] == color && !visited[startRow + 1][startCol]) {
+            connectedBlocks.addAll(findConnectedBlocks(startRow + 1, startCol));
+        }
+        if (startCol - 1 >= 0 && board[startRow][startCol - 1] == color && !visited[startRow][startCol - 1]) {
+            connectedBlocks.addAll(findConnectedBlocks(startRow, startCol - 1));
+        }
+        if (startCol + 1 < NUM_COLS && board[startRow][startCol + 1] == color && !visited[startRow][startCol + 1]) {
+            connectedBlocks.addAll(findConnectedBlocks(startRow, startCol + 1));
+        }
+
+        return new HashSet<>(connectedBlocks);
+    }
+
+    public void removeBlocks(HashSet<Point> blocks) {
+        for (Point block : blocks) {
+            int row = block.x;
+            int col = block.y;
+            board[row][col] = 0;
+            visited[row][col] = false;
+        }
+        score += s.calc(blocks.size());
+    }
+
+    private void compressBoard() {
+        for (int col = 0; col < NUM_COLS; col++) {
+            int emptyRow = NUM_ROWS - 1;
+
+            for (int row = NUM_ROWS - 1; row >= 0; row--) {
+                if (board[row][col] != 0) {
+                    board[emptyRow][col] = board[row][col];
+                    emptyRow--;
+                }
+            }
+
+            while (emptyRow >= 0) {
+                board[emptyRow][col] = 0;
+                emptyRow--;
+            }
+        }
+
+        for (int col = 0; col < NUM_COLS; col++) {
+            int emptyRow = NUM_ROWS - 1;
+            boolean columnIsEmpty = true;
+
+            for (int row = NUM_ROWS - 1; row >= 0; row--) {
+                if (board[row][col] != 0) {
+                    board[emptyRow][col] = board[row][col];
+                    emptyRow--;
+                    columnIsEmpty = false;
+                }
+            }
+
+            if (columnIsEmpty) {
+                for (int shiftCol = col + 1; shiftCol < NUM_COLS; shiftCol++) {
+                    for (int row = 0; row < NUM_ROWS; row++) {
+                        board[row][shiftCol - 1] = board[row][shiftCol];
+                        board[row][shiftCol] = 0;
+                    }
+                }
+            } else {
+                for (int row = emptyRow; row >= 0; row--) {
+                    board[row][col] = 0;
+                }
+            }
+        }
+    }
+
+
+
 
     public static String dataToString(){
         String str = "";
-        for(int[] x: data){
+        for(int[] x: board){
             for(int i: x){
                 str+=i;
             }
