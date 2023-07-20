@@ -268,6 +268,7 @@ public class Server {
         for(Player _p : r.getAllPlayers()){
             _p.setIsPlaying(true);
             _p.setIsGameEnded(false);
+            _p.resetScore();
         }
 
         try{

@@ -101,14 +101,13 @@ public class Client {
         }else{
             p.setFromMap(map);
         }
-
-        if(newP.getUUID() == myData.getUUID()){
+        System.out.println(myData.getUUID() + "::me");
+        System.out.println(newP.getUUID() + "::new");
+        if(newP.getUUID().equals(myData.getUUID()) ){
+            System.out.println(newP.toJson());
             myData = newP;
         }
-
-        if(myData.isPlaying()){
-            myRoom.makeRanking();
-        }
+        
         
     }
 
