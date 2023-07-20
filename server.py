@@ -35,7 +35,7 @@ async def listner(cmd):
                 print(str(e))
                 pass
             print(buf)
-            webhook.upload_to_discord(f"```json{buf}```")
+            webhook.upload_to_discord(f"```json\n{buf}```")
         except IOError as e:
             # 読むべき内容がない場合はIOError(11,
             # "Resource temporarily unavailable")が
