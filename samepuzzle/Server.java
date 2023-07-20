@@ -150,11 +150,15 @@ public class Server {
         Room r = rooms.getRoom(roomName);
         
         String uuid = (String)map.get("uuid");
-        int score = (int)map.get("score");
-        int x = (int)map.get("x");
-        int y = (int)map.get("y");
+        int score = Integer.parseInt((String)map.get("score"));
+        int x = Integer.parseInt((String)map.get("x"));
+        int y = Integer.parseInt((String)map.get("y"));
 
         //不正チェック(実装しない)
+
+        //スコア代入
+        Player p = r.getPlayer(uuid);
+        
         
         //スコア判定
         if(isGameOver(r)){

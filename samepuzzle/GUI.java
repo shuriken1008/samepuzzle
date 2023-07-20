@@ -255,9 +255,16 @@ public class GUI extends JFrame {
                                 SEBrake.playWav();
                                 removeBlocks(connectedBlocks);
                                 compressBoard();
-
-
                                 repaint();
+                                //ブロックデータ送信(最初にクリックした座標)
+                                try {
+                                    client.sendBreakPos(row, col);
+                                    
+                                } catch (IOException e1) {
+                                    // TODO Auto-generated catch block
+                                    e1.printStackTrace();
+                                }
+
                             } else if (checkAdjacentBlocks(row, col)) {
                                 boolean allBlocksAreAdjacent = true;
 
@@ -274,14 +281,6 @@ public class GUI extends JFrame {
                                     }
                                 }
 
-                                //ブロックデータ送信(最初にクリックした座標)
-                                
-                                try {
-                                    client.sendBreakPos(row, col);
-                                } catch (IOException e1) {
-                                    // TODO Auto-generated catch block
-                                    e1.printStackTrace();
-                                }
 
                                 if (allBlocksAreAdjacent) {
                                     showReStartMessage();
