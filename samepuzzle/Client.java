@@ -33,8 +33,9 @@ public class Client {
     private Room myRoom ;
     private static Player myData; 
     
-    public Client(String displayName) throws IOException {
+    public Client(String displayName , String roomName) throws IOException {
         myData = new Player(displayName);
+        myData.setRoomName(roomName);
 
         socket = new Socket(addr.getAddress(), addr.getPort());
         serverToClientStream = new ObjectInputStream(socket.getInputStream());
@@ -249,7 +250,7 @@ public class Client {
         System.out.print("部屋名 > ");
         String roomeName = consoleInputScanner.nextLine();
 
-        Client client = new Client(name);
+        Client client = new Client(name, roomeName);
         myData.setRoomName(roomeName);
         client.connect();
         
