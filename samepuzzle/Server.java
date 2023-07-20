@@ -258,8 +258,9 @@ public class Server {
     }
 
     public static boolean isGameOver(Room r){
+        int targetScore = r.getTargetScore();
         for(Player p : r.getAllPlayers()){
-            if (r.getTargetScore() <= p.getScore()){
+            if (targetScore <= p.getScore()){
                 return true;
             }else{
                 continue;
