@@ -1,18 +1,16 @@
 import subprocess
 import discord_webhook
 import queue
-import asyncio
+import threading
+import time
 
 webhook = discord_webhook.Webhook("https://discord.com/api/webhooks/1131413404599455754/4o4kIdRTzONA2EtKamBz_3Nbpb8eodVy_KmWGAiUP4e3ThytupkFJmJ_oSinhDogXiFj")
 
 q = queue.Queue()
 
-async def asyncio_main(cmd):
-    asyncio.ensure_future(send_loop())
-    asyncio.ensure_future(execute_bash_command(cmd))
 
 
-async def execute_bash_command(command):
+def execute_bash_command(command):
     process = subprocess.Popen(
         command, 
         shell=True,
@@ -34,13 +32,13 @@ async def execute_bash_command(command):
 
 
 
-async def send_loop():
+def send_loop():
     while True:
         try:
             if q.empty:
                 continue
             webhook.upload_to_discord(q.get())
-            await asyncio.sleep(0.8)
+            time.sleep(0.8)
             pass
         except Exception as e:
             print(e)
@@ -48,4 +46,12 @@ async def send_loop():
 
 if __name__ == "__main__":
     command_to_execute = "java samepuzzle/Server" 
-    asyncio.run(asyncio_main(command_to_execute))
+    
+    t1 = threading.Thread(target=execute_bash_command, command=command_to_execute)
+    t2 = threading.Thread(target=send_loop)
+
+    t1.start()
+    t2.start()
+
+    t1.join()
+    t2.join()
