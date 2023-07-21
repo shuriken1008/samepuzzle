@@ -248,7 +248,7 @@ public class Client {
     }
     
 
-
+    //DEBUG
     public static void main(String[] args) throws IOException {
 
         Scanner consoleInputScanner = new Scanner(System.in);

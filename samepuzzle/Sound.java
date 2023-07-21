@@ -12,6 +12,8 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+
+//音声再生
 public class Sound implements Runnable{
     private AudioInputStream stream;
     private byte[] buf;

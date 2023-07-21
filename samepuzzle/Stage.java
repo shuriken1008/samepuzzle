@@ -9,7 +9,7 @@ import java.util.Scanner;
 import javax.swing.SwingUtilities;
 
 
-
+//盤面のデータをサーバーで部屋ごとに統一するクラス(ほぼ未使用)
 public class Stage {
     public static int PINK = 0xff4bb3;
     public static int ORANGE = 0xd67d00;
