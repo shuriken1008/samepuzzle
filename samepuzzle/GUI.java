@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -38,9 +39,12 @@ public class GUI extends JFrame {
 
     private static final int OFFSET = 2;
 
+    private boolean hasConnected = false;
+
     private int[][] board;
     private boolean[][] visited;
     private int score;
+
 
     private HashSet<Point> lastConnectedBlocks = new HashSet<>();
 
@@ -98,14 +102,16 @@ public class GUI extends JFrame {
     class TitleScreenPanel extends JPanel {
         private JTextField playerTextField;
         private JTextField exroomTextField;
+        Image backgroundImage;
 
         public TitleScreenPanel() {
             setLayout(new GridBagLayout()); // Use GridBagLayout for more control over component sizes and positions
-
+                        
+            
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(5, 5, 5, 5);
 
-            JLabel titleLabel = new JLabel("SameGame");
+            JLabel titleLabel = new JLabel("SamePuzzle");
             titleLabel.setFont(new Font("Arial", Font.BOLD, 36));
             titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -301,6 +307,7 @@ public class GUI extends JFrame {
                         public void run() {
 
                             //ゲームスタート
+                            waitingLabel.setText("右クリックでスタート！！");
                             System.out.println("game start!");
                             setContentPane(new GamePanel());
                             revalidate();
@@ -775,8 +782,14 @@ public class GUI extends JFrame {
     public void connectToServer(String displayName, String roomName) {
 
         try {
-            client = new Client(displayName,roomName);
-            client.connect();
+            if (client == null){
+                client = new Client(displayName,roomName);
+                client.connect();
+            }else{
+                client.disconnect();
+                client.myData.setRoomName(roomName);
+                client.myData.setDisplayName(displayName);
+            }
 
         } catch (IOException e) {
             // TODO Auto-generated catch block

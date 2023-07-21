@@ -59,6 +59,9 @@ public class Player {
     public String getDisplayName(){
         return displayName;
     }
+    public void setDisplayName(String name){
+        displayName = name;
+    }
 
     public void setGameStartTime(Long s){
         gameStartAt = s;
