@@ -77,8 +77,8 @@ public class GUI extends JFrame {
             @Override
             public void mousePressed(MouseEvent e) {
                 //setContentPane(new GamePanel());
-                    
-            revalidate();
+
+                revalidate();
             }
         });
     }
@@ -119,30 +119,22 @@ public class GUI extends JFrame {
             exroomTextField = new JTextField();
             exroomTextField.setPreferredSize(new Dimension(200, 40)); // Set the desired size here
 
-            JButton rankingButton = new JButton("ランキング");
-            rankingButton.setPreferredSize(new Dimension(200, 60));
-            rankingButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    showRanking();
-                }
-            });
 
             JButton startButton = new JButton("ゲームを開始");
             startButton.setPreferredSize(new Dimension(200, 60));
             startButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // 画面を切り替える
-                
-                new Thread(()->{
-                    //add(new ChatPanel());
-                    startButton.setEnabled(false);    
-                    startGame();
-                    startButton.setEnabled(false);
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // 画面を切り替える
 
-                }).start();
-            }
+                    new Thread(()->{
+                        //add(new ChatPanel());
+                        startButton.setEnabled(false);
+                        startGame();
+                        startButton.setEnabled(false);
+
+                    }).start();
+                }
             });
 
             gbc.gridx = 0;
@@ -177,18 +169,6 @@ public class GUI extends JFrame {
             gbc.gridwidth = 2;
             gbc.fill = GridBagConstraints.HORIZONTAL;
             add(startButton, gbc);
-
-            gbc.gridx = 0;
-            gbc.gridy = 4;
-            gbc.gridwidth = 2;
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            add(rankingButton, gbc);
-        }
-
-        private void showRanking() {
-            setContentPane(new RankingPanel(client));
-            repaint();
-            revalidate();
         }
 
         private void startGame() {
@@ -198,7 +178,7 @@ public class GUI extends JFrame {
             if (!playerName.isEmpty() && !exroomName.isEmpty()) {
                 displayName = playerName;
                 roomName = exroomName;
-                
+
                 connectToServer(playerName, exroomName);
 
                 Timer timer = new Timer(false);
@@ -206,10 +186,10 @@ public class GUI extends JFrame {
                     @Override
                     public void run() {
                         //部屋に移動
-                        
-                        
+
+
                         //c.add(new ChatPanel());
-                        
+
                         setContentPane(new WaitingPanel(playerName, exroomName));
                         repaint();
                         revalidate();
@@ -218,7 +198,7 @@ public class GUI extends JFrame {
                     }
                 };
                 timer.schedule(task,10);
-                
+
             } else {
                 JOptionPane.showMessageDialog(this, "プレイヤー名と部屋名を入力してください。");
             }
@@ -270,16 +250,16 @@ public class GUI extends JFrame {
                     readyButton.setText(isReady? "取り消す": "準備完了！");
                     //JOptionPane.showMessageDialog(null, "マッチング中");
                     try {
-                        
+
                         client.myData.setIsReady(!isReady);
                         client.sendMyData();
-                        readyButton.setText(!isReady? "取り消す": "準備完了！");    
+                        readyButton.setText(!isReady? "取り消す": "準備完了！");
                         if(client.myData.isGameEnded()){
                         }else{
-                            
+
                             readyButton.setEnabled(false);
                         }
-                        
+
                     } catch (IOException e1) {
                         // TODO Auto-generated catch block
                         e1.printStackTrace();
@@ -299,8 +279,8 @@ public class GUI extends JFrame {
                         //プレイヤーの表示
                         String t = "<html>";
                         for(Player p : client.myRoom.getAllPlayers()){
-                            t += p.getDisplayName() + "    " 
-                            + (p.isReady() ? "準備ok!" : "") +  "<br>";
+                            t += p.getDisplayName() + "    "
+                                    + (p.isReady() ? "準備ok!" : "") +  "<br>";
                         }
                         t += "</html>";
                         playerLabel.setText(t);
@@ -319,7 +299,7 @@ public class GUI extends JFrame {
                     TimerTask task = new TimerTask() {
                         @Override
                         public void run() {
-                            
+
                             //ゲームスタート
                             System.out.println("game start!");
                             setContentPane(new GamePanel());
@@ -360,14 +340,14 @@ public class GUI extends JFrame {
                     if(!client.checkGameFlag()){
                         System.out.println("gameover");
                         showResultPanel();
-                        
+
                     }
                     boolean[][] _visited = copyVisited(visited);
                     if (row >= 0 && row < NUM_ROWS && col >= 0 && col < NUM_COLS && board[row][col] != 0) {
                         HashSet<Point> connectedBlocks = findConnectedBlocks(row, col);
                         ((JLabel) selectBlockPanel.getComponent(0)).setText(
-                            "<html>ブロック: " + connectedBlocks.size() + "　　　　" + "スコア" + client.myData.getScore() + "　　　　"
-                             + client.myData.getRank() + "位</html>"
+                                "<html>ブロック: " + connectedBlocks.size() + "　　　　" + "スコア" + client.myData.getScore() + "　　　　"
+                                        + client.myData.getRank() + "位</html>"
                         );
                         //((JLabel) selectBlockPanel.getComponent(1)).setText("スコア: " + client.myData.getScore());
 
@@ -428,12 +408,12 @@ public class GUI extends JFrame {
             remove(boardPanel);
             //add(new ResultPanel(score), BorderLayout.CENTER);
             new Thread(
-                () -> {
-                
-                    setContentPane(new ResultPanel(score));
-                    revalidate();
-                })
-                .start();
+                    () -> {
+
+                        setContentPane(new ResultPanel(score));
+                        revalidate();
+                    })
+                    .start();
 
         }
 
@@ -470,15 +450,15 @@ public class GUI extends JFrame {
                 JLabel rankLabel = new JLabel("Rank : " + rank + "位");
                 rankLabel.setHorizontalAlignment(SwingConstants.CENTER);
                 rankLabel.setFont(new Font("メイリオ", Font.PLAIN, 24));
-                
+
                 JLabel winnerLabel = new JLabel("Winner : " + winnerName + "  (" + hiScore + "点)");
                 winnerLabel.setFont(new Font("メイリオ", Font.PLAIN, 24));
                 winnerLabel.setHorizontalAlignment(SwingConstants.CENTER);
-               
-                
+
+
                 restartButton = new JButton("Restart Game");
                 restartButton.addActionListener(e -> restartGame());
-    
+
 
 
                 JPanel contentPanel = new JPanel(new GridLayout(3, 1));
@@ -494,14 +474,14 @@ public class GUI extends JFrame {
             private void restartGame() {
                 restartButton.setEnabled(false);
                 new Thread(
-                    () -> {
-                        
-                        setContentPane(new TitleScreenPanel());
-                        revalidate();
-                        initializeBoard();
-                    })
-                .start();
-                
+                        () -> {
+
+                            setContentPane(new TitleScreenPanel());
+                            revalidate();
+                            initializeBoard();
+                        })
+                        .start();
+
             }
         }
 
@@ -737,7 +717,7 @@ public class GUI extends JFrame {
     //チャット欄(重ねて表示)
     class ChatPanel extends JLayeredPane {
         public ChatPanel() {
-            
+
             setBounds((int) (WINDOW_X * 0.6), (int) (WINDOW_Y * 0.8), 300, 100);
 
             JTextArea textarea = new JTextArea(10, 40);
@@ -808,26 +788,26 @@ public class GUI extends JFrame {
         BGImageLayeredPane() {}
 
         void setImage(Image img) {
-        bgImage = img;
+            bgImage = img;
         }
         Image bgImage;
 
         @Override public void paint(Graphics g) {
-        if (bgImage != null) {
-            int imageh = bgImage.getHeight(null);
-            int imagew = bgImage.getWidth(null);
+            if (bgImage != null) {
+                int imageh = bgImage.getHeight(null);
+                int imagew = bgImage.getWidth(null);
 
-            Dimension d = getSize();
-            for (int h = 0; h < d.getHeight(); h += imageh) {
-            for (int w = 0; w < d.getWidth(); w += imagew) {
-                g.drawImage(bgImage, w, h, this);
+                Dimension d = getSize();
+                for (int h = 0; h < d.getHeight(); h += imageh) {
+                    for (int w = 0; w < d.getWidth(); w += imagew) {
+                        g.drawImage(bgImage, w, h, this);
+                    }
+                }
             }
-            }
-        }
-        super.paint(g);
+            super.paint(g);
         }
     }
-    
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             GUI game = new GUI();
