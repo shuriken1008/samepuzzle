@@ -789,6 +789,9 @@ public class GUI extends JFrame {
                 client.disconnect();
                 client.myData.setRoomName(roomName);
                 client.myData.setDisplayName(displayName);
+                client.myData.setIsPlaying(false);
+                client.myData.setIsGameEnded(true);
+                client.sendMyData();
             }
 
         } catch (IOException e) {
