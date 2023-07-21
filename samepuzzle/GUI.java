@@ -750,34 +750,6 @@ public class GUI extends JFrame {
         }
     }
 
-    //スコア・ランキング・選択中のブロックなど
-    class RankingPanel extends JPanel {
-        private Client client;
-
-        public RankingPanel(Client client) {
-            this.client = client;
-            setLayout(new BorderLayout());
-
-            // TODO
-
-            JButton backToTitleButton = new JButton("タイトル画面に戻る");
-            backToTitleButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    backToTitleScreen();
-                }
-            });
-
-            add(backToTitleButton, BorderLayout.SOUTH);
-        }
-
-        private void backToTitleScreen() {
-            setContentPane(new TitleScreenPanel());
-            repaint();
-            revalidate();
-        }
-    }
-
 
     //メニュー画面(おまけ)
     class MenuPanel extends JPanel {
